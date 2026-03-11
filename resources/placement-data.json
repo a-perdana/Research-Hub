@@ -1,0 +1,475 @@
+{
+  "summary": {
+    "total": 2288,
+    "totalSchools": 9,
+    "totalUnis": 302,
+    "totalCountries": 33,
+    "totalYears": 8,
+    "abroad": 338,
+    "science": 1472,
+    "social": 793
+  },
+  "bySchool": {
+    "Kesatuan Bangsa": 529,
+    "Kharisma Bangsa": 452,
+    "Semesta": 354,
+    "Pribadi Bandung": 258,
+    "Pribadi Depok": 225,
+    "Cahaya Rancamaya": 191,
+    "TNA Fatih": 141,
+    "Fatih": 113,
+    "Mega": 18
+  },
+  "byYear": {
+    "2017/2018": 66,
+    "2018/2019": 63,
+    "2019/2020": 198,
+    "2020/2021": 368,
+    "2021/2022": 368,
+    "2022/2023": 399,
+    "2023/2024": 404,
+    "2024/2025": 414
+  },
+  "yearField": {
+    "2017/2018": {
+      "science": 52,
+      "social": 14,
+      "total": 66
+    },
+    "2018/2019": {
+      "science": 50,
+      "social": 13,
+      "total": 63
+    },
+    "2019/2020": {
+      "science": 136,
+      "social": 62,
+      "total": 198
+    },
+    "2020/2021": {
+      "science": 257,
+      "social": 111,
+      "total": 368
+    },
+    "2021/2022": {
+      "science": 271,
+      "social": 97,
+      "total": 368
+    },
+    "2022/2023": {
+      "science": 219,
+      "social": 167,
+      "total": 399
+    },
+    "2023/2024": {
+      "science": 242,
+      "social": 161,
+      "total": 404
+    },
+    "2024/2025": {
+      "science": 244,
+      "social": 168,
+      "total": 414
+    }
+  },
+  "bySchoolYear": {
+    "Kesatuan Bangsa": {
+      "2017/2018": 53,
+      "2018/2019": 52,
+      "2019/2020": 73,
+      "2020/2021": 95,
+      "2021/2022": 68,
+      "2022/2023": 68,
+      "2023/2024": 63,
+      "2024/2025": 56
+    },
+    "Kharisma Bangsa": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 77,
+      "2020/2021": 83,
+      "2021/2022": 67,
+      "2022/2023": 75,
+      "2023/2024": 79,
+      "2024/2025": 71
+    },
+    "Semesta": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 0,
+      "2020/2021": 73,
+      "2021/2022": 80,
+      "2022/2023": 73,
+      "2023/2024": 67,
+      "2024/2025": 61
+    },
+    "Pribadi Bandung": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 0,
+      "2020/2021": 52,
+      "2021/2022": 44,
+      "2022/2023": 43,
+      "2023/2024": 61,
+      "2024/2025": 58
+    },
+    "Pribadi Depok": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 28,
+      "2020/2021": 26,
+      "2021/2022": 35,
+      "2022/2023": 27,
+      "2023/2024": 38,
+      "2024/2025": 71
+    },
+    "Cahaya Rancamaya": {
+      "2017/2018": 13,
+      "2018/2019": 11,
+      "2019/2020": 20,
+      "2020/2021": 17,
+      "2021/2022": 21,
+      "2022/2023": 41,
+      "2023/2024": 38,
+      "2024/2025": 30
+    },
+    "TNA Fatih": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 0,
+      "2020/2021": 20,
+      "2021/2022": 22,
+      "2022/2023": 43,
+      "2023/2024": 30,
+      "2024/2025": 26
+    },
+    "Fatih": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 0,
+      "2020/2021": 2,
+      "2021/2022": 31,
+      "2022/2023": 29,
+      "2023/2024": 28,
+      "2024/2025": 23
+    },
+    "Mega": {
+      "2017/2018": 0,
+      "2018/2019": 0,
+      "2019/2020": 0,
+      "2020/2021": 0,
+      "2021/2022": 0,
+      "2022/2023": 0,
+      "2023/2024": 0,
+      "2024/2025": 18
+    }
+  },
+  "topUnis": [
+    {
+      "name": "Universitas Gadjah Mada",
+      "count": 191,
+      "rankQS": 239,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Indonesia",
+      "count": 178,
+      "rankQS": 206,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Institut Teknologi Bandung (ITB)",
+      "count": 152,
+      "rankQS": 256,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Bina Nusantara University (BINUS)",
+      "count": 128,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Diponegoro",
+      "count": 108,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Syiah Kuala",
+      "count": 104,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Brawijaya",
+      "count": 87,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Islam Indonesia",
+      "count": 84,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Institut Teknologi Sepuluh Nopember (ITS)",
+      "count": 73,
+      "rankQS": 585,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Padjadjaran (UNPAD)",
+      "count": 70,
+      "rankQS": 596,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Institut Pertanian Bogor",
+      "count": 55,
+      "rankQS": 426,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Telkom",
+      "count": 52,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Airlangga",
+      "count": 50,
+      "rankQS": 285,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Muhammadiyah Yogyakarta",
+      "count": 34,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Islam Sultan Agung (UNISSULA)",
+      "count": 31,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Monash University",
+      "count": 30,
+      "rankQS": 63,
+      "country": "Australia"
+    },
+    {
+      "name": "Universitas Trisakti",
+      "count": 26,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Pembangunan Nasional (UPN) Veteran Yogyakarta",
+      "count": 23,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "President University",
+      "count": 21,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Nanyang Technological University (NTU)",
+      "count": 21,
+      "rankQS": 24,
+      "country": "Singapore"
+    },
+    {
+      "name": "Universitas Negeri Semarang (UNNES)",
+      "count": 19,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universiti Malaya",
+      "count": 18,
+      "rankQS": 60,
+      "country": "Malaysia"
+    },
+    {
+      "name": "Sampoerna University",
+      "count": 17,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "Universitas Sebelas Maret (UNS)",
+      "count": 16,
+      "rankQS": null,
+      "country": "Indonesia"
+    },
+    {
+      "name": "UIN Syarif Hidayatullah Jakarta",
+      "count": 16,
+      "rankQS": null,
+      "country": "Indonesia"
+    }
+  ],
+  "abroadCountries": [
+    {
+      "country": "Australia",
+      "count": 66
+    },
+    {
+      "country": "Malaysia",
+      "count": 66
+    },
+    {
+      "country": "Singapore",
+      "count": 42
+    },
+    {
+      "country": "USA",
+      "count": 27
+    },
+    {
+      "country": "Canada",
+      "count": 26
+    },
+    {
+      "country": "Japan",
+      "count": 21
+    },
+    {
+      "country": "UK",
+      "count": 12
+    },
+    {
+      "country": "Hong Kong SAR",
+      "count": 12
+    },
+    {
+      "country": "China",
+      "count": 7
+    },
+    {
+      "country": "South Korea",
+      "count": 7
+    },
+    {
+      "country": "Germany",
+      "count": 6
+    },
+    {
+      "country": "Netherlands",
+      "count": 6
+    },
+    {
+      "country": "Kazakhstan",
+      "count": 6
+    },
+    {
+      "country": "Poland",
+      "count": 5
+    },
+    {
+      "country": "Taiwan",
+      "count": 4
+    },
+    {
+      "country": "Kyrgyzstan",
+      "count": 4
+    },
+    {
+      "country": "Thailand",
+      "count": 3
+    },
+    {
+      "country": "Egypt",
+      "count": 2
+    },
+    {
+      "country": "Belgium",
+      "count": 2
+    },
+    {
+      "country": "France",
+      "count": 2
+    }
+  ],
+  "schoolStats": [
+    {
+      "school": "Kesatuan Bangsa",
+      "total": 529,
+      "abroad": 60,
+      "ptn": 359,
+      "topUni": "Universitas Gadjah Mada"
+    },
+    {
+      "school": "Kharisma Bangsa",
+      "total": 452,
+      "abroad": 113,
+      "ptn": 328,
+      "topUni": "Universitas Indonesia"
+    },
+    {
+      "school": "Semesta",
+      "total": 354,
+      "abroad": 25,
+      "ptn": 231,
+      "topUni": "Universitas Diponegoro"
+    },
+    {
+      "school": "Pribadi Bandung",
+      "total": 258,
+      "abroad": 46,
+      "ptn": 156,
+      "topUni": "Institut Teknologi Bandung (ITB)"
+    },
+    {
+      "school": "Pribadi Depok",
+      "total": 225,
+      "abroad": 33,
+      "ptn": 153,
+      "topUni": "Universitas Indonesia"
+    },
+    {
+      "school": "Cahaya Rancamaya",
+      "total": 191,
+      "abroad": 23,
+      "ptn": 118,
+      "topUni": "Institut Pertanian Bogor"
+    },
+    {
+      "school": "TNA Fatih",
+      "total": 141,
+      "abroad": 16,
+      "ptn": 106,
+      "topUni": "Universitas Syiah Kuala"
+    },
+    {
+      "school": "Fatih",
+      "total": 113,
+      "abroad": 22,
+      "ptn": 78,
+      "topUni": "Universitas Syiah Kuala"
+    },
+    {
+      "school": "Mega",
+      "total": 18,
+      "abroad": 0,
+      "ptn": 17,
+      "topUni": "Universitas Negeri Semarang (UNNES)"
+    }
+  ],
+  "genderSplit": {
+    "Male": 1376,
+    "Female": 905
+  },
+  "typeSplit": {
+    "Public University (PTN)": 1546,
+    "Private University (PTS)": 703,
+    "Government Affiliated Institution (Kedinasan)": 19
+  }
+}

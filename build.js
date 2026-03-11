@@ -16,6 +16,7 @@ const cleanUrls = {
   "index.html":       "",
   "olympiad.html":    "olympiad",
   "universities.html":"universities",
+  "placement.html":   "placement",
 };
 
 function rewriteLinks(content) {

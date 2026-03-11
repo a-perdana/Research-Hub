@@ -1,0 +1,798 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eduversal Research Hub | University Placement</title>
+  <script src="firebase-config.js"></script>
+  <script>
+    if (!window.ENV) window.ENV = {
+      FIREBASE_API_KEY:            "__FIREBASE_API_KEY__",
+      FIREBASE_AUTH_DOMAIN:        "__FIREBASE_AUTH_DOMAIN__",
+      FIREBASE_PROJECT_ID:         "__FIREBASE_PROJECT_ID__",
+      FIREBASE_STORAGE_BUCKET:     "__FIREBASE_STORAGE_BUCKET__",
+      FIREBASE_MESSAGING_SENDER_ID:"__FIREBASE_MESSAGING_SENDER_ID__",
+      FIREBASE_APP_ID:             "__FIREBASE_APP_ID__",
+    };
+  </script>
+  <script type="module" src="auth-guard.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --teal:   #14b8a6;
+      --teal2:  #0d9488;
+      --cyan:   #06b6d4;
+      --indigo: #6366f1;
+      --violet: #8b5cf6;
+      --amber:  #f59e0b;
+      --emerald:#059669;
+      --glass:  rgba(255,255,255,0.07);
+      --glass-b:rgba(255,255,255,0.11);
+      --text:   #ffffff;
+      --muted:  rgba(255,255,255,0.62);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body {
+      font-family:'DM Sans',sans-serif;
+      background:linear-gradient(135deg,#0c0c0c 0%,#0a1628 100%);
+      min-height:100vh;
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    /* ── Animated background ── */
+    .bg-orb {
+      position:fixed;border-radius:50%;filter:blur(90px);
+      opacity:0.28;pointer-events:none;animation:orbf 20s ease-in-out infinite;
+    }
+    .bg-orb-1{width:500px;height:500px;background:linear-gradient(135deg,#14b8a6,#0d9488);top:-150px;right:-100px;animation-delay:0s;}
+    .bg-orb-2{width:380px;height:380px;background:linear-gradient(135deg,#6366f1,#06b6d4);bottom:-80px;left:-80px;animation-delay:-8s;}
+    .bg-orb-3{width:260px;height:260px;background:linear-gradient(135deg,#8b5cf6,#14b8a6);top:45%;left:50%;animation-delay:-14s;}
+    @keyframes orbf{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(40px,-40px) scale(1.1);}}
+
+    /* ── Back button ── */
+    #back-btn {
+      position:fixed;top:18px;left:20px;z-index:9999;
+      display:inline-flex;align-items:center;gap:7px;
+      padding:8px 16px;
+      background:rgba(20,20,40,0.75);backdrop-filter:blur(14px);
+      border:1px solid var(--glass-b);border-radius:12px;
+      color:rgba(255,255,255,0.85);font-size:0.82rem;font-weight:500;
+      text-decoration:none;letter-spacing:0.02em;
+      transition:background 0.2s,border-color 0.2s;
+    }
+    #back-btn:hover{background:rgba(20,184,166,0.15);border-color:rgba(20,184,166,0.35);}
+    #back-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+    /* ── Page wrapper ── */
+    #page {
+      max-width:1240px;
+      margin:0 auto;
+      padding:6rem 2rem 5rem;
+      position:relative;z-index:10;
+    }
+
+    /* ── Hero header ── */
+    .hero {
+      text-align:center;
+      margin-bottom:4rem;
+      animation:fadeDown 0.8s ease-out both;
+    }
+    .hero-badge {
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.5rem 1.2rem;
+      background:rgba(20,184,166,0.12);border:1px solid rgba(20,184,166,0.25);
+      border-radius:50px;font-size:0.78rem;font-weight:600;
+      color:var(--teal);letter-spacing:0.08em;text-transform:uppercase;
+      margin-bottom:1.4rem;
+    }
+    .hero-badge::before{content:"";width:7px;height:7px;background:var(--teal);border-radius:50%;animation:blink 2s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(1.3);}}
+
+    .hero h1 {
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.6rem,5.5vw,4.2rem);
+      font-weight:700;
+      line-height:1.1;
+      background:linear-gradient(135deg,#fff 0%,#ccfbf1 50%,#99f6e4 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:0.9rem;
+    }
+    .hero p {
+      font-size:1.1rem;color:var(--muted);max-width:520px;margin:0 auto;line-height:1.6;
+    }
+
+    @keyframes fadeDown {
+      from{opacity:0;transform:translateY(-22px);}
+      to{opacity:1;transform:translateY(0);}
+    }
+
+    /* ── Stat counters strip ── */
+    .stats-strip {
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:1.2rem;
+      margin-bottom:3.5rem;
+      animation:fadeUp 0.7s ease-out 0.1s both;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+    .stat-pill {
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:20px;padding:1.4rem 1.2rem;
+      text-align:center;backdrop-filter:blur(16px);
+      transition:transform 0.3s ease,box-shadow 0.3s ease,border-color 0.3s;
+      position:relative;overflow:hidden;
+    }
+    .stat-pill::before {
+      content:"";position:absolute;inset:0;
+      background:var(--pill-accent);opacity:0.06;
+    }
+    .stat-pill:hover{transform:translateY(-5px);border-color:rgba(255,255,255,0.2);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+    .stat-pill .num {
+      font-family:'Playfair Display',serif;
+      font-size:2.2rem;font-weight:700;
+      background:var(--pill-accent);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      display:block;line-height:1;margin-bottom:0.4rem;
+    }
+    .stat-pill .lbl {font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.07em;font-weight:600;}
+
+    .stat-pill[data-c="teal"]{--pill-accent:linear-gradient(135deg,#14b8a6,#06b6d4);}
+    .stat-pill[data-c="indigo"]{--pill-accent:linear-gradient(135deg,#6366f1,#8b5cf6);}
+    .stat-pill[data-c="amber"]{--pill-accent:linear-gradient(135deg,#f59e0b,#f97316);}
+    .stat-pill[data-c="emerald"]{--pill-accent:linear-gradient(135deg,#059669,#14b8a6);}
+    .stat-pill[data-c="violet"]{--pill-accent:linear-gradient(135deg,#8b5cf6,#6366f1);}
+    .stat-pill[data-c="cyan"]{--pill-accent:linear-gradient(135deg,#06b6d4,#14b8a6);}
+    .stat-pill[data-c="rose"]{--pill-accent:linear-gradient(135deg,#f43f5e,#e11d48);}
+
+    /* ── Section headings ── */
+    .section-head {
+      display:flex;align-items:center;gap:1rem;
+      font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;
+      margin-bottom:1.5rem;
+    }
+    .section-head::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--glass-b),transparent);}
+    .section-head-icon {
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      background:var(--sh-color);
+    }
+    .section-head-icon svg{width:18px;height:18px;fill:white;}
+
+    /* ── Chart cards ── */
+    .chart-card {
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:22px;padding:1.8rem;backdrop-filter:blur(20px);
+      position:relative;overflow:hidden;
+    }
+    .chart-card::before {
+      content:"";position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--cc-accent);opacity:0.8;
+    }
+    .chart-card[data-accent="teal"]{--cc-accent:linear-gradient(90deg,#14b8a6,#06b6d4);}
+    .chart-card[data-accent="indigo"]{--cc-accent:linear-gradient(90deg,#6366f1,#8b5cf6);}
+    .chart-card[data-accent="amber"]{--cc-accent:linear-gradient(90deg,#f59e0b,#f97316);}
+    .chart-card[data-accent="emerald"]{--cc-accent:linear-gradient(90deg,#059669,#14b8a6);}
+    .chart-card[data-accent="violet"]{--cc-accent:linear-gradient(90deg,#8b5cf6,#ec4899);}
+    .chart-card[data-accent="cyan"]{--cc-accent:linear-gradient(90deg,#06b6d4,#0891b2);}
+
+    .chart-title {
+      font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;
+      margin-bottom:1.2rem;
+    }
+    .chart-sub {font-size:0.78rem;color:var(--muted);margin-top:-0.8rem;margin-bottom:1.2rem;}
+
+    /* ── Chart grid layouts ── */
+    .row-2 {display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .row-3 {display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .row-3r{display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .mb-chart{margin-bottom:1.5rem;}
+
+    canvas{max-height:320px;}
+
+    /* ── School grid ── */
+    .school-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+      gap:1.2rem;margin-bottom:1.5rem;
+    }
+    .school-card {
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:18px;padding:1.4rem;backdrop-filter:blur(16px);
+      transition:transform 0.3s ease,border-color 0.3s,box-shadow 0.3s;
+      position:relative;overflow:hidden;
+    }
+    .school-card:hover{transform:translateY(-6px);border-color:rgba(20,184,166,0.35);box-shadow:0 24px 48px rgba(0,0,0,0.35);}
+    .school-card::before{
+      content:"";position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--sc-accent);
+    }
+
+    .sc-name{font-family:'Playfair Display',serif;font-size:1rem;font-weight:600;margin-bottom:0.8rem;}
+    .sc-metrics{display:flex;flex-direction:column;gap:0.45rem;}
+    .sc-row{display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;}
+    .sc-label{color:var(--muted);}
+    .sc-val{font-weight:600;}
+    .sc-bar-wrap{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;margin-top:0.7rem;overflow:hidden;}
+    .sc-bar{height:100%;border-radius:3px;background:var(--sc-accent);transition:width 1s ease;}
+
+    /* ── Donut legend ── */
+    .donut-wrap{position:relative;}
+    .donut-legend{margin-top:1.2rem;display:flex;flex-direction:column;gap:0.5rem;}
+    .dl-row{display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;}
+    .dl-dot{width:10px;height:10px;border-radius:50%;margin-right:0.5rem;flex-shrink:0;}
+    .dl-label{display:flex;align-items:center;color:var(--muted);}
+    .dl-val{font-weight:600;}
+
+    /* ── Horizontal bar list ── */
+    .hbar-list{display:flex;flex-direction:column;gap:0.7rem;max-height:380px;overflow-y:auto;padding-right:4px;}
+    .hbar-list::-webkit-scrollbar{width:4px;}
+    .hbar-list::-webkit-scrollbar-track{background:rgba(255,255,255,0.05);border-radius:2px;}
+    .hbar-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:2px;}
+    .hbar-item{display:flex;flex-direction:column;gap:3px;}
+    .hbar-top{display:flex;justify-content:space-between;font-size:0.78rem;}
+    .hbar-name{color:var(--muted);flex:1;padding-right:0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .hbar-count{font-weight:700;white-space:nowrap;}
+    .hbar-track{height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;}
+    .hbar-fill{height:100%;border-radius:3px;background:var(--hb-color);transition:width 1.2s cubic-bezier(0.23,1,0.32,1);}
+
+    /* ── Country flags ── */
+    .flag-emoji{margin-right:0.4rem;}
+
+    /* ── Trend chart legend ── */
+    .trend-legend{display:flex;gap:1.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+    .tl-item{display:flex;align-items:center;gap:0.5rem;font-size:0.8rem;color:var(--muted);}
+    .tl-line{width:20px;height:3px;border-radius:2px;}
+
+    /* ── Responsive ── */
+    @media(max-width:900px){
+      .row-2,.row-3,.row-3r{grid-template-columns:1fr;}
+      canvas{max-height:260px;}
+    }
+    @media(max-width:640px){
+      #page{padding:5rem 1rem 4rem;}
+      .stats-strip{grid-template-columns:repeat(2,1fr);}
+      .hero h1{font-size:2.1rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Animated background -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <!-- Back button -->
+  <a id="back-btn" href="index.html">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Research Hub
+  </a>
+
+  <div id="page">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">University Placement Dashboard</div>
+      <h1>Where Our Graduates Go</h1>
+      <p>8 academic years · 9 partner schools · 302 universities across 33 countries</p>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="stats-strip">
+      <div class="stat-pill" data-c="teal">
+        <span class="num" data-target="2288">0</span>
+        <span class="lbl">Total Placements</span>
+      </div>
+      <div class="stat-pill" data-c="indigo">
+        <span class="num" data-target="302">0</span>
+        <span class="lbl">Universities</span>
+      </div>
+      <div class="stat-pill" data-c="amber">
+        <span class="num" data-target="33">0</span>
+        <span class="lbl">Countries</span>
+      </div>
+      <div class="stat-pill" data-c="emerald">
+        <span class="num" data-target="338">0</span>
+        <span class="lbl">Abroad Placements</span>
+      </div>
+      <div class="stat-pill" data-c="violet">
+        <span class="num" data-target="9">0</span>
+        <span class="lbl">Partner Schools</span>
+      </div>
+      <div class="stat-pill" data-c="cyan">
+        <span class="num" data-target="1546">0</span>
+        <span class="lbl">Public University (PTN)</span>
+      </div>
+      <div class="stat-pill" data-c="rose">
+        <span class="num" data-target="8">0</span>
+        <span class="lbl">Academic Years</span>
+      </div>
+    </div>
+
+    <!-- Row 1: Year trend (full width) -->
+    <div class="mb-chart">
+      <div class="chart-card" data-accent="teal">
+        <div class="chart-title">Placement Growth Over Time</div>
+        <div class="chart-sub">Annual cohort size by academic field — 2017/18 to 2024/25</div>
+        <div class="trend-legend">
+          <div class="tl-item"><div class="tl-line" style="background:#14b8a6"></div> Science</div>
+          <div class="tl-item"><div class="tl-line" style="background:#8b5cf6"></div> Social Sciences</div>
+          <div class="tl-item"><div class="tl-line" style="background:rgba(255,255,255,0.25);border-top:2px dashed rgba(255,255,255,0.3)"></div> Total</div>
+        </div>
+        <canvas id="trendChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 2: By School (left) + Field distribution (right) -->
+    <div class="row-3">
+      <div class="chart-card" data-accent="indigo">
+        <div class="chart-title">Placements by School</div>
+        <div class="chart-sub">Total graduates placed, all years combined</div>
+        <canvas id="schoolChart"></canvas>
+      </div>
+      <div class="chart-card" data-accent="violet">
+        <div class="chart-title">Study Field Split</div>
+        <div class="chart-sub">Science vs Social Sciences distribution</div>
+        <canvas id="fieldChart" style="max-height:200px;"></canvas>
+        <div class="donut-legend" id="fieldLegend"></div>
+      </div>
+    </div>
+
+    <!-- Row 3: Top universities -->
+    <div class="mb-chart">
+      <div class="chart-card" data-accent="emerald">
+        <div class="chart-title">Top 15 Universities by Placement Count</div>
+        <div class="chart-sub">Ranked by number of Eduversal graduates enrolled</div>
+        <canvas id="uniChart" style="max-height:380px;"></canvas>
+      </div>
+    </div>
+
+    <!-- Row 4: Abroad destinations + University type -->
+    <div class="row-2">
+      <div class="chart-card" data-accent="amber">
+        <div class="chart-title">Abroad Destinations</div>
+        <div class="chart-sub">Top countries outside Indonesia</div>
+        <div class="hbar-list" id="abroadList" style="--hb-color:linear-gradient(90deg,#f59e0b,#f97316);"></div>
+      </div>
+      <div class="chart-card" data-accent="cyan">
+        <div class="chart-title">University Type Breakdown</div>
+        <div class="chart-sub">PTN · PTS · Government Institution</div>
+        <canvas id="typeChart" style="max-height:200px;"></canvas>
+        <div class="donut-legend" id="typeLegend"></div>
+      </div>
+    </div>
+
+    <!-- School cards -->
+    <div style="margin-top:2.5rem;margin-bottom:1.5rem;">
+      <div class="section-head">
+        <div class="section-head-icon" style="--sh-color:linear-gradient(135deg,#14b8a6,#06b6d4);">
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+        </div>
+        School Breakdown
+      </div>
+      <div class="school-grid" id="schoolGrid"></div>
+    </div>
+
+  </div><!-- #page -->
+
+  <script>
+  // ── Embedded data ──────────────────────────────────────────────────
+  const DATA = {
+    summary:{total:2288,totalSchools:9,totalUnis:302,totalCountries:33,totalYears:8,abroad:338,science:1472,social:793},
+    bySchool:{"Kesatuan Bangsa":529,"Kharisma Bangsa":452,"Semesta":354,"Pribadi Bandung":258,"Pribadi Depok":225,"Cahaya Rancamaya":191,"TNA Fatih":141,"Fatih":113,"Mega":18},
+    byYear:{"2017/2018":66,"2018/2019":63,"2019/2020":198,"2020/2021":368,"2021/2022":368,"2022/2023":399,"2023/2024":404,"2024/2025":414},
+    yearField:{
+      "2017/2018":{science:52,social:14,total:66},
+      "2018/2019":{science:50,social:13,total:63},
+      "2019/2020":{science:136,social:62,total:198},
+      "2020/2021":{science:257,social:111,total:368},
+      "2021/2022":{science:271,social:97,total:368},
+      "2022/2023":{science:219,social:167,total:399},
+      "2023/2024":{science:242,social:161,total:404},
+      "2024/2025":{science:244,social:168,total:414}
+    },
+    topUnis:[
+      {name:"Universitas Gadjah Mada",count:191,rankQS:239,country:"Indonesia"},
+      {name:"Universitas Indonesia",count:178,rankQS:206,country:"Indonesia"},
+      {name:"Institut Teknologi Bandung (ITB)",count:152,rankQS:256,country:"Indonesia"},
+      {name:"Bina Nusantara University (BINUS)",count:128,rankQS:null,country:"Indonesia"},
+      {name:"Universitas Diponegoro",count:108,rankQS:null,country:"Indonesia"},
+      {name:"Universitas Syiah Kuala",count:104,rankQS:null,country:"Indonesia"},
+      {name:"Universitas Brawijaya",count:87,rankQS:null,country:"Indonesia"},
+      {name:"Universitas Islam Indonesia",count:84,rankQS:null,country:"Indonesia"},
+      {name:"Institut Teknologi Sepuluh Nopember (ITS)",count:73,rankQS:585,country:"Indonesia"},
+      {name:"Universitas Padjadjaran (UNPAD)",count:70,rankQS:596,country:"Indonesia"},
+      {name:"Institut Pertanian Bogor",count:55,rankQS:426,country:"Indonesia"},
+      {name:"Universitas Telkom",count:52,rankQS:null,country:"Indonesia"},
+      {name:"Universitas Airlangga",count:50,rankQS:285,country:"Indonesia"},
+      {name:"Monash University",count:30,rankQS:63,country:"Australia"},
+      {name:"Nanyang Technological University (NTU)",count:21,rankQS:24,country:"Singapore"}
+    ],
+    abroadCountries:[
+      {country:"Australia",count:66},{country:"Malaysia",count:66},
+      {country:"Singapore",count:42},{country:"USA",count:27},
+      {country:"Canada",count:26},{country:"Japan",count:21},
+      {country:"UK",count:12},{country:"Hong Kong SAR",count:12},
+      {country:"South Korea",count:7},{country:"China",count:7},
+      {country:"Germany",count:6},{country:"Netherlands",count:6},
+      {country:"Kazakhstan",count:6},{country:"Poland",count:5},
+      {country:"Taiwan",count:4}
+    ],
+    schoolStats:[
+      {school:"Kesatuan Bangsa",total:529,abroad:60,ptn:359,topUni:"Universitas Gadjah Mada"},
+      {school:"Kharisma Bangsa",total:452,abroad:113,ptn:328,topUni:"Universitas Indonesia"},
+      {school:"Semesta",total:354,abroad:25,ptn:231,topUni:"Universitas Diponegoro"},
+      {school:"Pribadi Bandung",total:258,abroad:46,ptn:156,topUni:"Institut Teknologi Bandung (ITB)"},
+      {school:"Pribadi Depok",total:225,abroad:33,ptn:153,topUni:"Universitas Indonesia"},
+      {school:"Cahaya Rancamaya",total:191,abroad:23,ptn:118,topUni:"Institut Pertanian Bogor"},
+      {school:"TNA Fatih",total:141,abroad:16,ptn:106,topUni:"Universitas Syiah Kuala"},
+      {school:"Fatih",total:113,abroad:22,ptn:78,topUni:"Universitas Syiah Kuala"},
+      {school:"Mega",total:18,abroad:0,ptn:17,topUni:"Universitas Negeri Semarang (UNNES)"}
+    ],
+    typeSplit:{"Public University (PTN)":1546,"Private University (PTS)":703,"Government Affiliated (Kedinasan)":19}
+  };
+
+  const SCHOOL_COLORS = [
+    'rgba(20,184,166,0.85)','rgba(99,102,241,0.85)','rgba(245,158,11,0.85)',
+    'rgba(5,150,105,0.85)','rgba(139,92,246,0.85)','rgba(6,182,212,0.85)',
+    'rgba(244,63,94,0.85)','rgba(251,146,60,0.85)','rgba(168,85,247,0.85)'
+  ];
+  const SCHOOL_ACCENTS = [
+    'linear-gradient(135deg,#14b8a6,#06b6d4)',
+    'linear-gradient(135deg,#6366f1,#8b5cf6)',
+    'linear-gradient(135deg,#f59e0b,#f97316)',
+    'linear-gradient(135deg,#059669,#14b8a6)',
+    'linear-gradient(135deg,#8b5cf6,#ec4899)',
+    'linear-gradient(135deg,#06b6d4,#0891b2)',
+    'linear-gradient(135deg,#f43f5e,#e11d48)',
+    'linear-gradient(135deg,#fb923c,#f59e0b)',
+    'linear-gradient(135deg,#a855f7,#6366f1)'
+  ];
+
+  const FLAGS = {
+    Australia:'🇦🇺',Malaysia:'🇲🇾',Singapore:'🇸🇬',USA:'🇺🇸',Canada:'🇨🇦',
+    Japan:'🇯🇵',UK:'🇬🇧','Hong Kong SAR':'🇭🇰','South Korea':'🇰🇷',China:'🇨🇳',
+    Germany:'🇩🇪',Netherlands:'🇳🇱',Kazakhstan:'🇰🇿',Poland:'🇵🇱',Taiwan:'🇹🇼',
+    Thailand:'🇹🇭',Egypt:'🇪🇬',Belgium:'🇧🇪',France:'🇫🇷',Kyrgyzstan:'🇰🇬',
+    Indonesia:'🇮🇩'
+  };
+
+  // Chart.js global defaults
+  Chart.defaults.color = 'rgba(255,255,255,0.55)';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  Chart.defaults.plugins.legend.display = false;
+
+  // ── Animated counter ──────────────────────────────────────────────
+  function animateCount(el, target, duration = 1800) {
+    const start = performance.now();
+    const update = (now) => {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(update);
+    };
+    requestAnimationFrame(update);
+  }
+
+  document.querySelectorAll('[data-target]').forEach(el => {
+    animateCount(el, +el.dataset.target);
+  });
+
+  // ── 1. Trend line chart ───────────────────────────────────────────
+  const years = Object.keys(DATA.yearField);
+  const sciData  = years.map(y => DATA.yearField[y].science);
+  const socData  = years.map(y => DATA.yearField[y].social);
+  const totData  = years.map(y => DATA.yearField[y].total);
+
+  new Chart(document.getElementById('trendChart'), {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'Science',
+          data: sciData,
+          borderColor: '#14b8a6',
+          backgroundColor: 'rgba(20,184,166,0.12)',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#14b8a6',
+          fill: true,
+          tension: 0.35
+        },
+        {
+          label: 'Social',
+          data: socData,
+          borderColor: '#8b5cf6',
+          backgroundColor: 'rgba(139,92,246,0.08)',
+          borderWidth: 2.5,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#8b5cf6',
+          fill: true,
+          tension: 0.35
+        },
+        {
+          label: 'Total',
+          data: totData,
+          borderColor: 'rgba(255,255,255,0.3)',
+          borderWidth: 1.5,
+          borderDash: [5,4],
+          pointRadius: 0,
+          fill: false,
+          tension: 0.35
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { font: { size: 11 } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.05)' },
+          ticks: { font: { size: 11 } },
+          beginAtZero: true
+        }
+      },
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(10,10,30,0.9)',
+          borderColor: 'rgba(20,184,166,0.3)',
+          borderWidth: 1,
+          padding: 12,
+          titleFont: { size: 13, weight: '600' },
+          bodyFont: { size: 12 }
+        }
+      }
+    }
+  });
+
+  // ── 2. School horizontal bar ──────────────────────────────────────
+  const schools = Object.keys(DATA.bySchool);
+  const schoolCounts = Object.values(DATA.bySchool);
+
+  new Chart(document.getElementById('schoolChart'), {
+    type: 'bar',
+    data: {
+      labels: schools,
+      datasets: [{
+        data: schoolCounts,
+        backgroundColor: SCHOOL_COLORS,
+        borderRadius: 8,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { font: { size: 11 } },
+          beginAtZero: true
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 11 } }
+        }
+      },
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(10,10,30,0.9)',
+          borderColor: 'rgba(20,184,166,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ` ${ctx.raw.toLocaleString()} placements`
+          }
+        }
+      }
+    }
+  });
+
+  // ── 3. Field donut ────────────────────────────────────────────────
+  const fieldColors = ['#14b8a6','#8b5cf6'];
+  const fieldLabels = ['Science','Social Sciences'];
+  const fieldVals   = [DATA.summary.science, DATA.summary.social];
+  const fieldTotal  = fieldVals.reduce((a,b)=>a+b,0);
+
+  new Chart(document.getElementById('fieldChart'), {
+    type: 'doughnut',
+    data: {
+      labels: fieldLabels,
+      datasets: [{
+        data: fieldVals,
+        backgroundColor: fieldColors,
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      cutout: '68%',
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(10,10,30,0.9)',
+          borderColor: 'rgba(20,184,166,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ` ${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/fieldTotal*100)}%)`
+          }
+        }
+      }
+    }
+  });
+
+  const fieldLeg = document.getElementById('fieldLegend');
+  fieldLabels.forEach((lbl,i) => {
+    fieldLeg.innerHTML += `
+      <div class="dl-row">
+        <span class="dl-label"><span class="dl-dot" style="background:${fieldColors[i]}"></span>${lbl}</span>
+        <span class="dl-val">${fieldVals[i].toLocaleString()} <span style="color:var(--muted);font-weight:400">(${Math.round(fieldVals[i]/fieldTotal*100)}%)</span></span>
+      </div>`;
+  });
+
+  // ── 4. Top universities horizontal bar ───────────────────────────
+  const top15 = DATA.topUnis.slice(0, 15);
+  const uniLabels = top15.map(u => u.name.length > 38 ? u.name.slice(0,36)+'…' : u.name);
+  const uniCounts = top15.map(u => u.count);
+  const uniColors = top15.map((u, i) => {
+    if (u.country !== 'Indonesia') return 'rgba(245,158,11,0.8)';
+    const g = ['rgba(20,184,166,0.8)','rgba(99,102,241,0.75)','rgba(6,182,212,0.75)'];
+    return g[i % g.length];
+  });
+
+  new Chart(document.getElementById('uniChart'), {
+    type: 'bar',
+    data: {
+      labels: uniLabels,
+      datasets: [{
+        data: uniCounts,
+        backgroundColor: uniColors,
+        borderRadius: 6,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { font: { size: 11 } },
+          beginAtZero: true
+        },
+        y: {
+          grid: { display: false },
+          ticks: { font: { size: 10.5 } }
+        }
+      },
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(10,10,30,0.9)',
+          borderColor: 'rgba(20,184,166,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            title: ctx => top15[ctx[0].dataIndex].name,
+            label: ctx => {
+              const u = top15[ctx.dataIndex];
+              const lines = [` ${ctx.raw} placements · ${u.country}`];
+              if (u.rankQS) lines.push(` QS World Rank #${u.rankQS}`);
+              return lines;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // ── 5. Abroad destinations (custom hbar list) ─────────────────────
+  const maxAbroad = DATA.abroadCountries[0].count;
+  const abroadList = document.getElementById('abroadList');
+  DATA.abroadCountries.forEach(d => {
+    const pct = Math.round(d.count / maxAbroad * 100);
+    const flag = FLAGS[d.country] || '🌍';
+    abroadList.innerHTML += `
+      <div class="hbar-item">
+        <div class="hbar-top">
+          <span class="hbar-name"><span class="flag-emoji">${flag}</span>${d.country}</span>
+          <span class="hbar-count">${d.count}</span>
+        </div>
+        <div class="hbar-track">
+          <div class="hbar-fill" style="width:${pct}%;background:linear-gradient(90deg,#f59e0b,#f97316)"></div>
+        </div>
+      </div>`;
+  });
+
+  // ── 6. University type donut ──────────────────────────────────────
+  const typeColors = ['#14b8a6','#6366f1','#f59e0b'];
+  const typeLabels = Object.keys(DATA.typeSplit);
+  const typeVals   = Object.values(DATA.typeSplit);
+  const typeTotal  = typeVals.reduce((a,b)=>a+b,0);
+
+  new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: typeLabels,
+      datasets: [{
+        data: typeVals,
+        backgroundColor: typeColors,
+        borderWidth: 0,
+        hoverOffset: 8
+      }]
+    },
+    options: {
+      cutout: '68%',
+      plugins: {
+        tooltip: {
+          backgroundColor: 'rgba(10,10,30,0.9)',
+          borderColor: 'rgba(20,184,166,0.3)',
+          borderWidth: 1,
+          callbacks: {
+            label: ctx => ` ${ctx.raw.toLocaleString()} (${Math.round(ctx.raw/typeTotal*100)}%)`
+          }
+        }
+      }
+    }
+  });
+
+  const typeLeg = document.getElementById('typeLegend');
+  const typeShortLabels = ['Public (PTN)','Private (PTS)','Gov. Affiliated'];
+  typeShortLabels.forEach((lbl,i) => {
+    typeLeg.innerHTML += `
+      <div class="dl-row">
+        <span class="dl-label"><span class="dl-dot" style="background:${typeColors[i]}"></span>${lbl}</span>
+        <span class="dl-val">${typeVals[i].toLocaleString()} <span style="color:var(--muted);font-weight:400">(${Math.round(typeVals[i]/typeTotal*100)}%)</span></span>
+      </div>`;
+  });
+
+  // ── 7. School cards ───────────────────────────────────────────────
+  const maxTotal = Math.max(...DATA.schoolStats.map(s=>s.total));
+  const grid = document.getElementById('schoolGrid');
+
+  DATA.schoolStats.forEach((s, i) => {
+    const pct = Math.round(s.total / maxTotal * 100);
+    const abroadPct = Math.round(s.abroad / s.total * 100);
+    const ptnPct = Math.round(s.ptn / s.total * 100);
+    grid.innerHTML += `
+      <div class="school-card" style="--sc-accent:${SCHOOL_ACCENTS[i]}">
+        <div class="sc-name">${s.school}</div>
+        <div class="sc-metrics">
+          <div class="sc-row">
+            <span class="sc-label">Total Placements</span>
+            <span class="sc-val">${s.total.toLocaleString()}</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-label">Abroad</span>
+            <span class="sc-val">${s.abroad} <span style="color:var(--muted);font-weight:400;font-size:0.75rem">(${abroadPct}%)</span></span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-label">Public University (PTN)</span>
+            <span class="sc-val">${ptnPct}%</span>
+          </div>
+          <div class="sc-row">
+            <span class="sc-label">Top Destination</span>
+            <span class="sc-val" style="font-size:0.75rem;text-align:right;max-width:170px">${s.topUni}</span>
+          </div>
+        </div>
+        <div class="sc-bar-wrap">
+          <div class="sc-bar" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+  });
+  </script>
+</body>
+</html>
