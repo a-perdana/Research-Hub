@@ -13,8 +13,9 @@ const replacements = {
 
 // ── Clean URL mapping ─────────────────────────────────────────────
 const cleanUrls = {
-  "index.html":    "",
-  "olympiad.html": "olympiad",
+  "index.html":       "",
+  "olympiad.html":    "olympiad",
+  "universities.html":"universities",
 };
 
 function rewriteLinks(content) {
