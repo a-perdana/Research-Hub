@@ -21,7 +21,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#F8FAFC}
+body{background:linear-gradient(150deg,#EEF2FF 0%,#F1F5FE 40%,#E8F4FD 75%,#F0FDF4 100%) fixed;background-attachment:fixed}
 #back-btn{
   position:fixed;top:14px;left:16px;z-index:9999;
   display:inline-flex;align-items:center;gap:6px;
@@ -49,10 +49,10 @@ body{background:#F8FAFC}
 .tab-btn:hover{background:rgba(59,130,246,.07)!important;color:#1D4ED8!important;border-radius:6px 6px 0 0;}
 
 .medal-row{border-radius:8px;padding:4px 6px;margin:-4px -6px;transition:background .15s;}
-.medal-row:hover{background:#F1F5F9;}
+.medal-row:hover{background:#EEF2FF;}
 
 .field-row{border-radius:6px;padding:3px 6px;margin:-3px -6px;transition:background .15s;}
-.field-row:hover{background:#EFF6FF;}
+.field-row:hover{background:#E0E7FF;}
 
 .yr-bar-item{transition:filter .15s,transform .15s;transform-origin:bottom;cursor:pointer;position:relative;}
 .yr-bar-item:hover{filter:brightness(1.18) saturate(1.2);transform:scaleY(1.05);}
@@ -615,9 +615,127 @@ const MC={Gold:"#D97706",Silver:"#64748B",Bronze:"#92400E",HM:"#7C3AED"};
 const ME={Gold:"🥇",Silver:"🥈",Bronze:"🥉",HM:"🏅"};
 const SC={"Kesatuan Bangsa":"#1D4ED8","Kharisma Bangsa":"#059669","Semesta":"#7C3AED","Pribadi Bandung":"#D97706","Pribadi Depok":"#EA580C","Cahaya Rancamaya":"#DB2777","Fatih":"#0D9488","Mega Islamic":"#4F46E5","Sragen BBS":"#65A30D","SMAN Banua":"#0891B2","SMAN Sumbar":"#DC2626"};
 
+const TIMNAS=[
+["Mathematics (IMO)","Axel Giovanni Hartanto","SMA Kharisma Bangsa","Silver",2023],
+["Mathematics (IMO)","Rafael Kristoforus Yanto","SMAK PENABUR Gading Serpong","Silver",2023],
+["Mathematics (IMO)","Evelyn Lianto","SMAK Mawar Sharon Surabaya","Bronze",2023],
+["Mathematics (IMO)","Joshua Marvel Solomon","SMAK BPK PENABUR 1 Jakarta","Bronze",2023],
+["Mathematics (IMO)","Evan Nathanael","SMAK Yos Sudarso Batam","HM",2023],
+["Mathematics (IMO)","Rizky Rajendra Anantadewa","SMAN 5 Surabaya","HM",2023],
+["Physics (IPhO)","Fansen Candra Funata","SMAK Darma Yudha Pekanbaru","Silver",2023],
+["Physics (IPhO)","Savero Lukianto Chandra","SMAK PENABUR Gading Serpong","Silver",2023],
+["Physics (IPhO)","Muhammad Arif Khalfani I.","SMAN 1 Yogyakarta","Bronze",2023],
+["Physics (IPhO)","Ahmad Nafi Ramadhan","SMA Negeri 1 Depok","HM",2023],
+["Physics (IPhO)","Muh. Zaidan Naja","MAN 2 Kota Malang","HM",2023],
+["Chemistry (IChO)","Kevin Lius Bong","SMAK Petra 1 Surabaya","Silver",2023],
+["Chemistry (IChO)","Abraham Abednego Lincoln","SMAK 1 BPK PENABUR Jakarta","Silver",2023],
+["Chemistry (IChO)","Muhammad Adyan Dafi","SMA Cahaya Rancamaya Bogor","Bronze",2023],
+["Chemistry (IChO)","Muhammad Ezra Sarliviano","MAN Insan Cendekia Serpong","Bronze",2023],
+["Biology (IBO)","Calvin Shevchenko","SMA Katolik St. Louis 1 Surabaya","Silver",2023],
+["Biology (IBO)","Nicholas Siddharta","SMAK 1 Penabur Jakarta","Silver",2023],
+["Biology (IBO)","Nakeisha Jovita Purnomo","SMAK PENABUR Gading Serpong","Bronze",2023],
+["Biology (IBO)","Mariel Chrysantha T.","SMAN 2 Kota Tangerang Selatan","Bronze",2023],
+["Informatics (IOI)","Vannes Wijaya","SMAN 8 Pekanbaru","Silver",2023],
+["Informatics (IOI)","Albert Ariel Putra","SMAK Petra 4 Sidoarjo","Silver",2023],
+["Informatics (IOI)","Matthew Allan","SMA Kanisius Jakarta","Silver",2023],
+["Informatics (IOI)","Joel Gunawan","SMAK Gloria 2 Surabaya","Bronze",2023],
+["Economics (IEO)","Himyar Ammar","SMAN 1 Yogyakarta","Gold",2023],
+["Economics (IEO)","Reyhan Muhammad","SMAN 3 Yogyakarta","Silver",2023],
+["Economics (IEO)","Naufal Wiwit","SMAN 8 Jakarta","Silver",2023],
+["Economics (IEO)","Naufal Attaya","SMAN 1 Depok","Bronze",2023],
+["Economics (IEO)","Nazla Salsabila","SMAN 1 Padang","Bronze",2023],
+["Geography (iGeo)","Fiona Zhang","SMA Kristen Petra 1 Surabaya","Silver",2023],
+["Geography (iGeo)","Fakhri Aziz","SMAN 8 Jakarta","Silver",2023],
+["Geography (iGeo)","Muhammad Aris","SMAN 1 Yogyakarta","Bronze",2023],
+["Geography (iGeo)","Aprilia Syifa","SMAN 1 Depok","Bronze",2023],
+["Linguistic (IOL)","Calvin Shevchenko","SMA Kesatuan Bangsa","Bronze",2023],
+["Linguistic (IOL)","Nicholas Siddharta","SMAK 1 Penabur Jakarta","HM",2023],
+["Linguistic (IOL)","Amalia Rahma","SMAN 4 Denpasar","Participant",2023],
+["Linguistic (IOL)","Farrel Adhitama","SMAN 2 Tangerang Selatan","Participant",2023],
+["Linguistic (IOL)","Arkan Syahbi","SMA Kanisius Jakarta","Silver",2023],
+["Mathematics (IMO)","Kevin Adi Senjaya","SMAK BPK Penabur Gading Serpong","Gold",2024],
+["Mathematics (IMO)","Raymond Christopher Tanto","SMA Kesatuan Bangsa","Bronze",2024],
+["Mathematics (IMO)","Frederico Samuel Halim","SMAK Mudita Singkawang","Bronze",2024],
+["Mathematics (IMO)","Ben Robinson","SMA Kristen Petra 1 Surabaya","Bronze",2024],
+["Mathematics (IMO)","Maulana Satya Adigama","SMA Negeri 3 Semarang","HM",2024],
+["Mathematics (IMO)","Timothy William Koesasih","SMA Kristen Petra 2 Surabaya","HM",2024],
+["Physics (IPhO)","Zahran Nizar Fadhlan","SMA Negeri 1 Padang","Silver",2024],
+["Physics (IPhO)","Kaitlyn Iliana Toniman","SMA Kristen SMUK 1 Penabur","Bronze",2024],
+["Physics (IPhO)","Clarissa Aurelia Nahid S.","SMANU M.H. Thamrin Jakarta","HM",2024],
+["Physics (IPhO)","Daniel Mark","SMA Kristen SMUK 1 Penabur","HM",2024],
+["Physics (IPhO)","Adika Rasendriya Arya P.","SMA Negeri 1 Bogor","HM",2024],
+["Chemistry (IChO)","Sultan El Shirazy","SMAN 17 Palembang","Bronze",2024],
+["Chemistry (IChO)","James Adhimulia","SMA Kristen Petra 1 Surabaya","Bronze",2024],
+["Chemistry (IChO)","Aryo Razak","SMA Negeri 1 Tamansari","Bronze",2024],
+["Chemistry (IChO)","Ahmad Ayman Al Ghifary","MAN 2 Kota Malang","Bronze",2024],
+["Biology (IBO)","Aaron Christian Endrij","SMAK BPK Gading Serpong","Silver",2024],
+["Biology (IBO)","Keisha Rochelline S.","SMAN 8 Jakarta","Silver",2024],
+["Biology (IBO)","Erlangga Dief Putra Hamam","SMA IT Al Irsyad Purwokerto","Silver",2024],
+["Biology (IBO)","Samuel Cristian","SMAN 19 Jakarta","Participant",2024],
+["Informatics (IOI)","Muhammad Rais Fathin M.","SMAN 1 Bogor","Silver",2024],
+["Informatics (IOI)","Stefano Chiesa Suryanto","SMAK BPK Penabur Jakarta","Silver",2024],
+["Informatics (IOI)","Alfonsus Raditya Arsadjaja","SMA Kanisius Jakarta","Bronze",2024],
+["Informatics (IOI)","Zamil Majdy","SMA Semesta Semarang","Bronze",2024],
+["Economics (IEO)","Nazla Salsabila","SMAN 1 Padang","Gold",2024],
+["Economics (IEO)","Naufal Attaya","SMAN 1 Depok","Silver",2024],
+["Economics (IEO)","Himyar Ammar","SMAN 1 Yogyakarta","Silver",2024],
+["Economics (IEO)","Reyhan Muhammad","SMAN 3 Yogyakarta","Bronze",2024],
+["Economics (IEO)","Naufal Wiwit","SMAN 8 Jakarta","Bronze",2024],
+["Geography (iGeo)","Rifki Alghifari","SMAN 1 Yogyakarta","Gold",2024],
+["Geography (iGeo)","Aditya Prawira","SMAN 1 Padang","Gold",2024],
+["Geography (iGeo)","Pradipta Jati","SMAN 2 Tangerang Selatan","Gold",2024],
+["Geography (iGeo)","Naufal Wijaya","SMAN 1 Depok","Silver",2024],
+["Linguistic (IOL)","Matthew Allan","SMA Kharisma Bangsa","HM",2024],
+["Linguistic (IOL)","Jonathan Daryl","SMAK 1 BPK Penabur","Participant",2024],
+["Linguistic (IOL)","Alifia Nabila","SMAN 8 Jakarta","Participant",2024],
+["Mathematics (IMO)","Janssen Edyth Lim","SMAK Immanuel Pontianak","Bronze",2025],
+["Mathematics (IMO)","Raymond Christopher Tanto","SMAK Kalam Kudus Sukoharjo","Bronze",2025],
+["Mathematics (IMO)","Jesreel Hasiholan Sigalingging","SMAS Kristen 5 BPK Penabur","Bronze",2025],
+["Mathematics (IMO)","Louis Wilson Gunawan","SMAS 1 Kristen BPK Penabur","Bronze",2025],
+["Mathematics (IMO)","Leonardo Valerian","SMA Darma Yudha Riau","HM",2025],
+["Mathematics (IMO)","Danica Odelia","SMAK BPK Penabur Gading Serpong","HM",2025],
+["Physics (IPhO)","Daffa Virwandy","SMAN 17 Palembang","Bronze",2025],
+["Physics (IPhO)","M. Rakha Naufal Maulana","SMA Negeri 1 Serang","Bronze",2025],
+["Physics (IPhO)","M. Dakita Arfa Alfaritsi","MAN 2 Malang","Bronze",2025],
+["Physics (IPhO)","Gusti Komang Abhika A.","SMA Kesatuan Bangsa","HM",2025],
+["Physics (IPhO)","Arkaan Javier","MAN 2 Malang","HM",2025],
+["Chemistry (IChO)","M. Clerisyad Atthahirzi","SMA Al Wafi IBS Bogor","Silver",2025],
+["Chemistry (IChO)","Sultan El Shirazy","SMAN 17 Palembang","Silver",2025],
+["Chemistry (IChO)","Bramantyo Abimanyu","SMA Labschool Kebayoran","Bronze",2025],
+["Chemistry (IChO)","Darren Mikael Chauhari","SMAK 1 BPK Penabur Jakarta","Bronze",2025],
+["Biology (IBO)","Keisya Dhiandra Prabowo","SMA ABBS Surakarta","Silver",2025],
+["Biology (IBO)","Muhammad Nafis Hidayatullah","SMA Negeri 3 Semarang","Bronze",2025],
+["Biology (IBO)","Dave Vicco Youki","SMA Kristen Penabur Cirebon","Pending",2025],
+["Biology (IBO)","Jeffry","SMA Negeri 1 Tanjungpinang","Pending",2025],
+["Informatics (IOI)","Hanif Achdan Pietoyo","SMA Kesatuan Bangsa","Bronze",2025],
+["Informatics (IOI)","Kelven Nathanael","SMA Katolik St. Louis 1 Surabaya","Pending",2025],
+["Informatics (IOI)","Aufan Ahmad Mumtaza","SMAS Al-Irsyad Satya","Pending",2025],
+["Informatics (IOI)","Nathan Allan","SMA Kanisius Jakarta","Pending",2025],
+["Economics (IEO)","Alifia Azzahra","SMA Kesatuan Bangsa","Silver",2025],
+["Economics (IEO)","Muhammad Daffa","SMAN 8 Jakarta","Bronze",2025],
+["Economics (IEO)","Farras Muhammad","SMAN 1 Bogor","Bronze",2025],
+["Economics (IEO)","Jessica Wijaya","SMAK 1 BPK Penabur","Participant",2025],
+["Economics (IEO)","Kevin Nathanael","SMA Kristen Petra 1","Participant",2025],
+["Geography (iGeo)","Zaki Muhammad","SMA Semesta Semarang","Silver",2025],
+["Geography (iGeo)","Ahmad Syukri","MAN 2 Kota Malang","Bronze",2025],
+["Geography (iGeo)","Raniah Khairunisa","SMAN 8 Jakarta","Bronze",2025],
+["Geography (iGeo)","Bimo Satrio","SMAN 3 Yogyakarta","Participant",2025],
+["Linguistic (IOL)","Federico Nathan","SMA Kesatuan Bangsa","Silver",2025],
+["Linguistic (IOL)","Zahra Salsabila","SMAN 3 Yogyakarta","Bronze",2025],
+["Linguistic (IOL)","Muhammad Hanif","SMAN 1 Depok","Participant",2025],
+["Linguistic (IOL)","Keyla Azahra","SMAN 1 Bogor","Participant",2025],
+];
+const TPMAP={"SMA Kharisma Bangsa":"Kharisma Bangsa","SMA Kesatuan Bangsa":"Kesatuan Bangsa","SMA Semesta Semarang":"Semesta","SMA Cahaya Rancamaya Bogor":"Cahaya Rancamaya"};
+const SCOLOR={"Mathematics (IMO)":"#1D4ED8","Physics (IPhO)":"#7C3AED","Chemistry (IChO)":"#DB2777","Biology (IBO)":"#059669","Informatics (IOI)":"#0891B2","Economics (IEO)":"#D97706","Geography (iGeo)":"#65A30D","Linguistic (IOL)":"#DC2626"};
+const SICON={"Mathematics (IMO)":"📐","Physics (IPhO)":"⚛️","Chemistry (IChO)":"🧪","Biology (IBO)":"🧬","Informatics (IOI)":"💻","Economics (IEO)":"📈","Geography (iGeo)":"🌍","Linguistic (IOL)":"🗣️"};
+const TMED_C={Gold:"#B45309",Silver:"#475569",Bronze:"#78350F",HM:"#6D28D9",Participant:"#94A3B8",Pending:"#7C3AED"};
+const TMED_BG={Gold:"linear-gradient(135deg,#FEF9C3,#FDE68A)",Silver:"linear-gradient(135deg,#E2E8F0,#CBD5E1)",Bronze:"linear-gradient(135deg,#FDE8D0,#FCD9B5)",HM:"linear-gradient(135deg,#EDE9FE,#DDD6FE)",Participant:"#F1F5F9",Pending:"#F5F3FF"};
+const TMED_ICON={Gold:"🥇",Silver:"🥈",Bronze:"🥉",HM:"🏅",Participant:"—",Pending:"⏳"};
+
 function Dashboard() {
   const [level, setLevel] = useState("All");
   const [tab, setTab] = useState("overview");
+  const [timnasYear, setTimnasYear] = useState(2025);
 
   const data = useMemo(() => RAW.map(r => ({
     level:r[0], year:r[1], comp:r[2],
@@ -675,14 +793,14 @@ function Dashboard() {
 
   const maxBar=bySchool.length>0?bySchool[0][1].score:1;
   const maxY=byYear.length>0?Math.max(...byYear.map(([,v])=>v.Gold+v.Silver+v.Bronze+v.HM)):1;
-  const card={background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:20,boxShadow:"0 1px 3px rgba(0,0,0,0.06)"};
+  const card={background:"rgba(255,255,255,0.82)",backdropFilter:"blur(12px)",border:"1px solid rgba(203,213,234,0.7)",borderRadius:12,padding:20,boxShadow:"0 4px 16px rgba(99,102,241,0.09),0 1px 4px rgba(0,0,0,0.05)"};
   const pill=(active,onClick,label)=>(
-    <button onClick={onClick} className="pill-btn" style={{padding:"7px 18px",borderRadius:24,border:`1.5px solid ${active?"#1D4ED8":"#CBD5E1"}`,background:active?"#1D4ED8":"white",color:active?"white":"#475569",cursor:"pointer",fontSize:13,fontWeight:active?"600":"400",transition:"all 0.15s"}}>{label}</button>
+    <button onClick={onClick} className="pill-btn" style={{padding:"7px 18px",borderRadius:24,border:`1.5px solid ${active?"#1D4ED8":"#C7D2E8"}`,background:active?"#1D4ED8":"rgba(238,242,255,0.8)",color:active?"white":"#475569",cursor:"pointer",fontSize:13,fontWeight:active?"600":"400",transition:"all 0.15s"}}>{label}</button>
   );
 
   return (
-    <div style={{fontFamily:"'Segoe UI',system-ui,sans-serif",background:"#F8FAFC",minHeight:"100vh",color:"#1E293B"}}>
-      <div style={{background:"white",borderBottom:"1px solid #E2E8F0",padding:"24px 36px 0",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
+    <div style={{fontFamily:"'Segoe UI',system-ui,sans-serif",background:"transparent",minHeight:"100vh",color:"#1E293B"}}>
+      <div style={{background:"linear-gradient(135deg,rgba(255,255,255,0.95) 0%,rgba(238,242,255,0.92) 50%,rgba(224,236,252,0.90) 100%)",backdropFilter:"blur(20px)",borderBottom:"1px solid rgba(196,212,240,0.8)",padding:"24px 36px 0",boxShadow:"0 4px 20px rgba(99,102,241,0.10)"}}>
         <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:12,marginBottom:20}}>
           <div>
             <div style={{fontSize:11,letterSpacing:"0.2em",color:"#3B82F6",textTransform:"uppercase",fontWeight:600,marginBottom:6}}>Eduversal Partner Schools</div>
@@ -695,10 +813,10 @@ function Dashboard() {
         </div>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:12,marginBottom:0}}>
           {[
-            {label:"Total",value:filtered.length,color:"#3B82F6",bg:"#EFF6FF",icon:"🎖️"},
-            {label:"Gold",value:totals.Gold,color:"#D97706",bg:"#FFFBEB",icon:"🥇"},
-            {label:"Silver",value:totals.Silver,color:"#475569",bg:"#F8FAFC",icon:"🥈"},
-            {label:"Bronze + HM",value:totals.Bronze+totals.HM,color:"#92400E",bg:"#FEF3C7",icon:"🥉"},
+            {label:"Total",value:filtered.length,color:"#2563EB",bg:"linear-gradient(135deg,#DBEAFE,#EEF2FF)",icon:"🎖️"},
+            {label:"Gold",value:totals.Gold,color:"#B45309",bg:"linear-gradient(135deg,#FEF9C3,#FEF3C7)",icon:"🥇"},
+            {label:"Silver",value:totals.Silver,color:"#475569",bg:"linear-gradient(135deg,#E2E8F0,#F1F5F9)",icon:"🥈"},
+            {label:"Bronze + HM",value:totals.Bronze+totals.HM,color:"#92400E",bg:"linear-gradient(135deg,#FDE68A,#FEF3C7)",icon:"🥉"},
           ].map(k=>(
             <div key={k.label} className="stat-tile" style={{background:k.bg,borderTop:`3px solid ${k.color}`,borderRadius:"0 0 8px 8px",padding:"14px 16px",textAlign:"center"}}>
               <div style={{fontSize:22}}>{k.icon}</div>
@@ -708,13 +826,13 @@ function Dashboard() {
           ))}
         </div>
         <div style={{display:"flex",gap:0,marginTop:16}}>
-          {[["overview","📊 Overview"],["schools","🏫 Schools"],["timeline","📅 Timeline"],["champions","⭐ Champions"]].map(([id,label])=>(
+          {[["overview","📊 Overview"],["schools","🏫 Schools"],["timeline","📅 Timeline"],["champions","⭐ Champions"],["timnas","🇮🇩 Timnas"]].map(([id,label])=>(
             <button key={id} onClick={()=>setTab(id)} className="tab-btn" style={{padding:"10px 20px",border:"none",borderBottom:`2.5px solid ${tab===id?"#1D4ED8":"transparent"}`,background:"transparent",color:tab===id?"#1D4ED8":"#64748B",cursor:"pointer",fontSize:13,fontWeight:tab===id?600:400,transition:"all 0.15s"}}>{label}</button>
           ))}
         </div>
       </div>
 
-      <div style={{padding:"24px 36px"}}>
+      <div style={{padding:"24px 36px",background:"transparent"}}>
         {tab==="overview" && (
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20}}>
             <div style={card}>
@@ -725,17 +843,17 @@ function Dashboard() {
                     <span style={{fontSize:13,fontWeight:500}}>{ME[m]} {m==="HM"?"Honorable Mention":m}</span>
                     <span style={{fontWeight:700,color:MC[m]}}>{totals[m]}</span>
                   </div>
-                  <div style={{height:7,background:"#F1F5F9",borderRadius:4,overflow:"hidden"}}>
+                  <div style={{height:7,background:"#E2E8F4",borderRadius:4,overflow:"hidden"}}>
                     <div style={{height:"100%",width:`${(totals[m]/(filtered.length||1))*100}%`,background:MC[m],borderRadius:4}}/>
                   </div>
                 </div>
               ))}
-              <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid #F1F5F9",display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
-                <div style={{background:"#FEF9C3",borderRadius:8,padding:"10px 14px",textAlign:"center"}}>
+              <div style={{marginTop:16,paddingTop:14,borderTop:"1px solid #DDE8F5",display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                <div style={{background:"linear-gradient(135deg,#FEF9C3,#FDE68A)",borderRadius:8,padding:"10px 14px",textAlign:"center",boxShadow:"0 2px 8px rgba(180,83,9,0.10)"}}>
                   <div style={{fontSize:18,fontWeight:700,color:"#B45309"}}>{bySchool.length}</div>
                   <div style={{fontSize:11,color:"#92400E"}}>Active Schools</div>
                 </div>
-                <div style={{background:"#EFF6FF",borderRadius:8,padding:"10px 14px",textAlign:"center"}}>
+                <div style={{background:"linear-gradient(135deg,#DBEAFE,#C7D9FA)",borderRadius:8,padding:"10px 14px",textAlign:"center",boxShadow:"0 2px 8px rgba(29,78,216,0.10)"}}>
                   <div style={{fontSize:18,fontWeight:700,color:"#1D4ED8"}}>{[...new Set(filtered.map(d=>d.year))].length}</div>
                   <div style={{fontSize:11,color:"#1E40AF"}}>Years of Data</div>
                 </div>
@@ -747,7 +865,7 @@ function Dashboard() {
                 <div key={f} className="field-row" style={{display:"flex",alignItems:"center",gap:10,marginBottom:10}}>
                   <div style={{width:18,fontSize:11,color:"#94A3B8",textAlign:"right",flexShrink:0}}>{i+1}</div>
                   <div style={{flex:1,fontSize:13}}>{f}</div>
-                  <div style={{width:100,height:6,background:"#F1F5F9",borderRadius:3}}>
+                  <div style={{width:100,height:6,background:"#DDE5F5",borderRadius:3}}>
                     <div style={{height:"100%",width:`${(cnt/byField[0][1])*100}%`,background:`hsl(${220-i*18},70%,55%)`,borderRadius:3}}/>
                   </div>
                   <div style={{width:28,textAlign:"right",fontSize:13,fontWeight:600,color:"#475569"}}>{cnt}</div>
@@ -795,7 +913,7 @@ function Dashboard() {
                 return (
                   <div key={school} className="school-card" style={{...card,padding:"14px 18px",borderLeft:`4px solid ${color}`}}>
                     <div style={{display:"flex",alignItems:"center",gap:14,flexWrap:"wrap"}}>
-                      <div style={{width:30,height:30,borderRadius:"50%",background:badge||"#F1F5F9",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:badge?"white":"#64748B",flexShrink:0}}>{i+1}</div>
+                      <div style={{width:30,height:30,borderRadius:"50%",background:badge||"#DDE5F5",display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:badge?"white":"#475569",flexShrink:0}}>{i+1}</div>
                       <div style={{flex:1,minWidth:120}}>
                         <div style={{fontWeight:600,fontSize:15,color:"#0F172A"}}>{school}</div>
                         <div style={{fontSize:12,color:"#94A3B8",marginTop:1}}>{st.total} medals · Score: <b style={{color}}>{st.score}</b></div>
@@ -806,7 +924,7 @@ function Dashboard() {
                         ))}
                       </div>
                       <div style={{width:120}}>
-                        <div style={{height:6,background:"#F1F5F9",borderRadius:3,overflow:"hidden"}}>
+                        <div style={{height:6,background:"#DDE5F5",borderRadius:3,overflow:"hidden"}}>
                           <div style={{height:"100%",width:`${(st.score/maxBar)*100}%`,background:color,borderRadius:3}}/>
                         </div>
                       </div>
@@ -831,13 +949,102 @@ function Dashboard() {
                   <div style={{fontWeight:500}}>{d.comp}</div>
                   <div style={{color:"#94A3B8"}}>{d.field}</div>
                 </div>
-                <span style={{padding:"3px 10px",borderRadius:20,background:"#F1F5F9",fontSize:11,color:"#3B82F6",fontWeight:600}}>{d.year}</span>
+                <span style={{padding:"3px 10px",borderRadius:20,background:"linear-gradient(135deg,#DBEAFE,#C7D9FA)",fontSize:11,color:"#2563EB",fontWeight:600}}>{d.year}</span>
                 <span style={{fontSize:11,color:"#94A3B8"}}>{d.level==="International"?"🌍":"🇮🇩"}</span>
               </div>
             ))}
             {filtered.length>60&&<div style={{textAlign:"center",color:"#94A3B8",fontSize:12,padding:8}}>Showing 60 of {filtered.length} records</div>}
           </div>
         )}
+
+        {tab==="timnas" && (()=>{
+          const tFiltered=TIMNAS.filter(r=>r[4]===timnasYear);
+          const tBySubject={};
+          tFiltered.forEach(r=>{if(!tBySubject[r[0]])tBySubject[r[0]]=[];tBySubject[r[0]].push(r);});
+          const tMedals=tFiltered.reduce((a,r)=>{const k=r[3];if(k==="Gold"||k==="Silver"||k==="Bronze"||k==="HM")a[k]=(a[k]||0)+1;return a;},{Gold:0,Silver:0,Bronze:0,HM:0});
+          const tPartner=tFiltered.filter(r=>TPMAP[r[2]]);
+          return (
+            <div>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:12,marginBottom:20}}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:600,color:"#94A3B8",letterSpacing:"0.08em",marginBottom:4}}>INDONESIAN NATIONAL TEAM (TIMNAS)</div>
+                  <div style={{fontSize:13,color:"#64748B"}}>{tFiltered.length} delegates · {tPartner.length > 0 ? <><b style={{color:"#1D4ED8"}}>{tPartner.length}</b> from Eduversal partner schools</> : "No Eduversal partner school delegates"}</div>
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  {[2023,2024,2025].map(y=>(
+                    <button key={y} className="pill-btn" onClick={()=>setTimnasYear(y)} style={{padding:"7px 16px",borderRadius:24,border:`1.5px solid ${timnasYear===y?"#1D4ED8":"#C7D2E8"}`,background:timnasYear===y?"#1D4ED8":"rgba(238,242,255,0.8)",color:timnasYear===y?"white":"#475569",cursor:"pointer",fontSize:13,fontWeight:timnasYear===y?"600":"400"}}>{y}</button>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10,marginBottom:20}}>
+                {[{k:"Gold",icon:"🥇",label:"Gold"},{k:"Silver",icon:"🥈",label:"Silver"},{k:"Bronze",icon:"🥉",label:"Bronze"},{k:"HM",icon:"🏅",label:"HM"}].map(({k,icon,label})=>(
+                  <div key={k} style={{background:TMED_BG[k],borderTop:`3px solid ${TMED_C[k]}`,borderRadius:"0 0 8px 8px",padding:"12px 14px",textAlign:"center"}}>
+                    <div style={{fontSize:20}}>{icon}</div>
+                    <div style={{fontSize:22,fontWeight:700,color:TMED_C[k]}}>{tMedals[k]||0}</div>
+                    <div style={{fontSize:11,color:"#64748B",fontWeight:500}}>{label}</div>
+                  </div>
+                ))}
+              </div>
+              {tPartner.length>0&&(
+                <div style={{background:"linear-gradient(135deg,rgba(238,242,255,0.9),rgba(224,231,252,0.9))",backdropFilter:"blur(8px)",border:"1px solid rgba(196,212,240,0.8)",borderRadius:12,padding:"14px 18px",marginBottom:16,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+                  <span style={{fontSize:16}}>🏫</span>
+                  <div style={{fontSize:13,color:"#1E293B",fontWeight:500,flex:1}}>
+                    <b style={{color:"#1D4ED8"}}>Eduversal Partner School Delegates:</b>{" "}
+                    {tPartner.map((r,i)=>(
+                      <span key={i} style={{display:"inline-flex",alignItems:"center",gap:4,marginRight:10,marginBottom:2}}>
+                        <span style={{fontSize:11}}>{TMED_ICON[r[3]]}</span>
+                        <b style={{color:"#0F172A"}}>{r[1]}</b>
+                        <span style={{padding:"1px 7px",borderRadius:10,background:SC[TPMAP[r[2]]]||"#6366F1",color:"white",fontSize:10,fontWeight:600}}>{TPMAP[r[2]]}</span>
+                        <span style={{fontSize:11,color:"#64748B"}}>· {r[0].split(" ")[0]}</span>
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
+                {Object.entries(tBySubject).map(([subj,students])=>{
+                  const sc=SCOLOR[subj]||"#6366F1";
+                  const si=SICON[subj]||"🎓";
+                  const hasPartner=students.some(r=>TPMAP[r[2]]);
+                  return (
+                    <div key={subj} style={{background:"rgba(255,255,255,0.82)",backdropFilter:"blur(12px)",border:`1px solid rgba(203,213,234,0.7)`,borderRadius:12,overflow:"hidden",boxShadow:"0 4px 16px rgba(99,102,241,0.09)"}}>
+                      <div style={{background:`linear-gradient(135deg,${sc}18,${sc}08)`,borderBottom:`1px solid ${sc}30`,padding:"12px 16px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <span style={{fontSize:18}}>{si}</span>
+                          <div>
+                            <div style={{fontSize:13,fontWeight:700,color:"#0F172A"}}>{subj}</div>
+                            <div style={{fontSize:11,color:"#64748B"}}>{students.length} delegates</div>
+                          </div>
+                        </div>
+                        {hasPartner&&<span style={{fontSize:10,padding:"2px 8px",borderRadius:10,background:`${sc}22`,color:sc,fontWeight:700,border:`1px solid ${sc}40`}}>★ Partner</span>}
+                      </div>
+                      <div style={{padding:"8px 14px 10px"}}>
+                        {students.map((r,j)=>{
+                          const partnerName=TPMAP[r[2]];
+                          const medC=TMED_C[r[3]]||"#94A3B8";
+                          const medIcon=TMED_ICON[r[3]]||"—";
+                          return (
+                            <div key={j} style={{display:"flex",alignItems:"center",gap:8,padding:"5px 2px",borderBottom:j<students.length-1?"1px solid #EEF2F8":"none"}}>
+                              <span style={{width:20,textAlign:"center",fontSize:14,flexShrink:0}}>{medIcon}</span>
+                              <div style={{flex:1,minWidth:0}}>
+                                <div style={{fontSize:12,fontWeight:partnerName?700:500,color:partnerName?"#0F172A":"#334155",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{r[1]}</div>
+                                <div style={{fontSize:10,color:"#94A3B8",whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{r[2]}</div>
+                              </div>
+                              <div style={{display:"flex",alignItems:"center",gap:5,flexShrink:0}}>
+                                {partnerName&&<span style={{fontSize:9,padding:"2px 6px",borderRadius:8,background:SC[partnerName]||"#6366F1",color:"white",fontWeight:700}}>{partnerName}</span>}
+                                <span style={{fontSize:10,fontWeight:600,color:medC,padding:"1px 7px",borderRadius:8,background:`${medC}15`,border:`1px solid ${medC}30`}}>{r[3]}</span>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
         {tab==="champions" && (
           <div style={{display:"flex",flexDirection:"column",gap:12}}>
