@@ -13,10 +13,11 @@ const replacements = {
 
 // ── Clean URL mapping ─────────────────────────────────────────────
 const cleanUrls = {
-  "index.html":       "",
-  "olympiad.html":    "olympiad",
-  "universities.html":"universities",
-  "placement.html":   "placement",
+  "index.html":        "",
+  "olympiad.html":     "olympiad",
+  "universities.html": "universities",
+  "placement.html":    "placement",
+  "scholarships.html": "scholarships",
 };
 
 function rewriteLinks(content) {
@@ -58,6 +59,18 @@ for (const [file, slug] of Object.entries(cleanUrls)) {
   const destName = slug === "" ? "index.html" : `${slug}.html`;
   fs.writeFileSync(path.join("dist", destName), html);
   console.log(`Processed: ${file} → dist/${destName}`);
+}
+
+// ── resources/ folder ─────────────────────────────────────────────
+const resDir = path.join("dist", "resources");
+if (!fs.existsSync(resDir)) fs.mkdirSync(resDir);
+const resFiles = ["scholarship-data.json"];
+for (const f of resFiles) {
+  const src = path.join("resources", f);
+  if (fs.existsSync(src)) {
+    fs.copyFileSync(src, path.join(resDir, f));
+    console.log(`Copied: resources/${f}`);
+  }
 }
 
 // ── auth-guard.js ─────────────────────────────────────────────────

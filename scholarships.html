@@ -1,0 +1,757 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eduversal Research Hub | Scholarship Dashboard</title>
+  <script src="firebase-config.js"></script>
+  <script>
+    if (!window.ENV) window.ENV = {
+      FIREBASE_API_KEY:            "__FIREBASE_API_KEY__",
+      FIREBASE_AUTH_DOMAIN:        "__FIREBASE_AUTH_DOMAIN__",
+      FIREBASE_PROJECT_ID:         "__FIREBASE_PROJECT_ID__",
+      FIREBASE_STORAGE_BUCKET:     "__FIREBASE_STORAGE_BUCKET__",
+      FIREBASE_MESSAGING_SENDER_ID:"__FIREBASE_MESSAGING_SENDER_ID__",
+      FIREBASE_APP_ID:             "__FIREBASE_APP_ID__",
+    };
+  </script>
+  <script type="module" src="auth-guard.js"></script>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;charset=utf-8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='50' fill='%230a0a1a'/><circle cx='50' cy='42' r='18' fill='none' stroke='%2314b8a6' stroke-width='7'/><line x1='62' y1='55' x2='74' y2='70' stroke='%230d9488' stroke-width='7' stroke-linecap='round'/><circle cx='50' cy='42' r='7' fill='%2314b8a6'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      --teal:   #14b8a6;
+      --teal2:  #0d9488;
+      --cyan:   #06b6d4;
+      --indigo: #6366f1;
+      --violet: #8b5cf6;
+      --amber:  #f59e0b;
+      --emerald:#059669;
+      --rose:   #f43f5e;
+      --glass:  rgba(255,255,255,0.07);
+      --glass-b:rgba(255,255,255,0.11);
+      --text:   #ffffff;
+      --muted:  rgba(255,255,255,0.62);
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body {
+      font-family:'DM Sans',sans-serif;
+      background:linear-gradient(135deg,#0c0c0c 0%,#0a1628 100%);
+      min-height:100vh;
+      color:var(--text);
+      overflow-x:hidden;
+    }
+
+    /* ── Animated background ── */
+    .bg-orb{position:fixed;border-radius:50%;filter:blur(90px);opacity:0.28;pointer-events:none;animation:orbf 20s ease-in-out infinite;}
+    .bg-orb-1{width:500px;height:500px;background:linear-gradient(135deg,#8b5cf6,#6366f1);top:-150px;right:-100px;animation-delay:0s;}
+    .bg-orb-2{width:380px;height:380px;background:linear-gradient(135deg,#f59e0b,#14b8a6);bottom:-80px;left:-80px;animation-delay:-8s;}
+    .bg-orb-3{width:260px;height:260px;background:linear-gradient(135deg,#14b8a6,#8b5cf6);top:45%;left:50%;animation-delay:-14s;}
+    @keyframes orbf{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(40px,-40px) scale(1.1);}}
+
+    /* ── Back button ── */
+    #back-btn{
+      position:fixed;top:18px;left:20px;z-index:9999;
+      display:inline-flex;align-items:center;gap:7px;
+      padding:8px 16px;
+      background:rgba(20,20,40,0.75);backdrop-filter:blur(14px);
+      border:1px solid var(--glass-b);border-radius:12px;
+      color:rgba(255,255,255,0.85);font-size:0.82rem;font-weight:500;
+      text-decoration:none;letter-spacing:0.02em;
+      transition:background 0.2s,border-color 0.2s;
+    }
+    #back-btn:hover{background:rgba(139,92,246,0.15);border-color:rgba(139,92,246,0.35);}
+    #back-btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+
+    /* ── Page wrapper ── */
+    #page{max-width:1240px;margin:0 auto;padding:6rem 2rem 5rem;position:relative;z-index:10;}
+
+    /* ── Hero ── */
+    .hero{text-align:center;margin-bottom:4rem;animation:fadeDown 0.8s ease-out both;}
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.5rem 1.2rem;
+      background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.25);
+      border-radius:50px;font-size:0.78rem;font-weight:600;
+      color:var(--violet);letter-spacing:0.08em;text-transform:uppercase;
+      margin-bottom:1.4rem;
+    }
+    .hero-badge::before{content:"";width:7px;height:7px;background:var(--violet);border-radius:50%;animation:blink 2s ease-in-out infinite;}
+    @keyframes blink{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(1.3);}}
+    .hero h1{
+      font-family:'Playfair Display',serif;
+      font-size:clamp(2.6rem,5.5vw,4.2rem);font-weight:700;line-height:1.1;
+      background:linear-gradient(135deg,#fff 0%,#ede9fe 50%,#c4b5fd 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      margin-bottom:0.9rem;
+    }
+    .hero p{font-size:1.1rem;color:var(--muted);max-width:540px;margin:0 auto;line-height:1.6;}
+
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-22px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+
+    /* ── Stat pills ── */
+    .stats-strip{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:1.2rem;margin-bottom:3.5rem;animation:fadeUp 0.7s ease-out 0.1s both;
+    }
+    .stat-pill{
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:20px;padding:1.4rem 1.2rem;text-align:center;
+      backdrop-filter:blur(16px);
+      transition:transform 0.3s,box-shadow 0.3s,border-color 0.3s;
+      position:relative;overflow:hidden;
+    }
+    .stat-pill::before{content:"";position:absolute;inset:0;background:var(--pill-accent);opacity:0.06;}
+    .stat-pill:hover{transform:translateY(-5px);border-color:rgba(255,255,255,0.2);box-shadow:0 20px 40px rgba(0,0,0,0.3);}
+    .stat-pill .num{
+      font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:700;
+      background:var(--pill-accent);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      display:block;line-height:1;margin-bottom:0.4rem;
+    }
+    .stat-pill .lbl{font-size:0.75rem;color:rgba(255,255,255,0.85);text-transform:uppercase;letter-spacing:0.07em;font-weight:700;}
+    .stat-pill[data-c="violet"]{--pill-accent:linear-gradient(135deg,#8b5cf6,#6366f1);}
+    .stat-pill[data-c="amber"]{--pill-accent:linear-gradient(135deg,#f59e0b,#f97316);}
+    .stat-pill[data-c="teal"]{--pill-accent:linear-gradient(135deg,#14b8a6,#06b6d4);}
+    .stat-pill[data-c="emerald"]{--pill-accent:linear-gradient(135deg,#059669,#14b8a6);}
+    .stat-pill[data-c="cyan"]{--pill-accent:linear-gradient(135deg,#06b6d4,#14b8a6);}
+
+    /* ── Section headings ── */
+    .section-head{
+      display:flex;align-items:center;gap:1rem;
+      font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;
+      margin-bottom:1.5rem;
+    }
+    .section-head::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--glass-b),transparent);}
+    .section-head-icon{
+      width:36px;height:36px;border-radius:10px;
+      display:flex;align-items:center;justify-content:center;
+      background:var(--sh-color);
+    }
+    .section-head-icon svg{width:18px;height:18px;fill:white;}
+
+    /* ── Chart cards ── */
+    .chart-card{
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:22px;padding:1.8rem;backdrop-filter:blur(20px);
+      position:relative;overflow:hidden;
+    }
+    .chart-card::before{
+      content:"";position:absolute;top:0;left:0;right:0;height:3px;
+      background:var(--cc-accent);opacity:0.8;
+    }
+    .chart-card[data-accent="violet"]{--cc-accent:linear-gradient(90deg,#8b5cf6,#6366f1);}
+    .chart-card[data-accent="amber"]{--cc-accent:linear-gradient(90deg,#f59e0b,#f97316);}
+    .chart-card[data-accent="teal"]{--cc-accent:linear-gradient(90deg,#14b8a6,#06b6d4);}
+    .chart-card[data-accent="emerald"]{--cc-accent:linear-gradient(90deg,#059669,#14b8a6);}
+    .chart-card[data-accent="indigo"]{--cc-accent:linear-gradient(90deg,#6366f1,#8b5cf6);}
+    .chart-card[data-accent="cyan"]{--cc-accent:linear-gradient(90deg,#06b6d4,#0891b2);}
+
+    .chart-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;margin-bottom:0.4rem;}
+    .chart-sub{font-size:0.78rem;color:var(--muted);margin-bottom:1.2rem;}
+
+    /* ── Grid layouts ── */
+    .row-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .row-3{display:grid;grid-template-columns:2fr 1fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .row-3r{display:grid;grid-template-columns:1fr 2fr;gap:1.5rem;margin-bottom:1.5rem;}
+    .mb-chart{margin-bottom:1.5rem;}
+    canvas{max-height:320px;}
+
+    /* ── Donut legend ── */
+    .donut-legend{margin-top:1.2rem;display:flex;flex-direction:column;gap:0.5rem;}
+    .dl-row{display:flex;align-items:center;justify-content:space-between;font-size:0.82rem;}
+    .dl-dot{width:10px;height:10px;border-radius:50%;margin-right:0.5rem;flex-shrink:0;}
+    .dl-label{display:flex;align-items:center;color:var(--muted);}
+    .dl-val{font-weight:600;}
+
+    /* ── Horizontal bar list ── */
+    .hbar-list{display:flex;flex-direction:column;gap:0.7rem;padding-right:4px;}
+    .hbar-item{display:flex;flex-direction:column;gap:3px;}
+    .hbar-top{display:flex;justify-content:space-between;font-size:0.78rem;}
+    .hbar-name{color:var(--muted);flex:1;padding-right:0.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .hbar-count{font-weight:700;white-space:nowrap;}
+    .hbar-track{height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;}
+    .hbar-fill{height:100%;border-radius:3px;background:var(--hb-color);transition:width 1.2s cubic-bezier(0.23,1,0.32,1);}
+
+    /* ── Year trend legend ── */
+    .trend-legend{display:flex;gap:1rem;margin-bottom:1rem;flex-wrap:wrap;}
+    .tl-item{display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:var(--muted);}
+    .tl-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0;}
+
+    /* ── Type badge chips ── */
+    .type-chips{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.5rem;}
+    .type-chip{
+      display:inline-flex;align-items:center;gap:0.4rem;
+      padding:0.35rem 0.9rem;border-radius:50px;
+      font-size:0.75rem;font-weight:600;letter-spacing:0.04em;
+      border:1px solid;cursor:pointer;
+      transition:all 0.2s;
+    }
+    .type-chip .chip-dot{width:7px;height:7px;border-radius:50%;}
+
+    /* ── Excel-like table section ── */
+    .table-section{margin-top:2rem;}
+
+    .table-controls{
+      display:flex;flex-wrap:wrap;gap:0.8rem;
+      margin-bottom:1.2rem;align-items:center;
+    }
+    .table-search{
+      flex:1;min-width:200px;
+      background:rgba(255,255,255,0.06);
+      border:1px solid var(--glass-b);border-radius:12px;
+      padding:0.6rem 1rem 0.6rem 2.4rem;
+      color:#fff;font-size:0.85rem;font-family:'DM Sans',sans-serif;
+      outline:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:0.7rem center;
+      transition:border-color 0.2s;
+    }
+    .table-search:focus{border-color:rgba(139,92,246,0.5);}
+    .table-search::placeholder{color:rgba(255,255,255,0.3);}
+
+    .table-filter{
+      background:rgba(255,255,255,0.06);border:1px solid var(--glass-b);
+      border-radius:12px;padding:0.6rem 2rem 0.6rem 0.9rem;
+      color:#fff;font-size:0.82rem;font-family:'DM Sans',sans-serif;
+      outline:none;cursor:pointer;
+      appearance:none;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat:no-repeat;background-position:calc(100% - 0.6rem) center;
+      transition:border-color 0.2s;min-width:140px;
+    }
+    .table-filter:focus{border-color:rgba(139,92,246,0.5);}
+    .table-filter option{background:#1a1a2e;color:#fff;}
+
+    .table-count{
+      font-size:0.8rem;color:var(--muted);white-space:nowrap;
+      margin-left:auto;
+    }
+    .table-count strong{color:#fff;}
+
+    .table-wrap{
+      background:var(--glass);border:1px solid var(--glass-b);
+      border-radius:18px;overflow:hidden;backdrop-filter:blur(20px);
+    }
+    .table-scroll{overflow-x:auto;max-height:520px;overflow-y:auto;}
+    .table-scroll::-webkit-scrollbar{width:5px;height:5px;}
+    .table-scroll::-webkit-scrollbar-track{background:rgba(255,255,255,0.04);}
+    .table-scroll::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.14);border-radius:3px;}
+
+    table{width:100%;border-collapse:collapse;font-size:0.82rem;}
+    thead{position:sticky;top:0;z-index:10;}
+    thead th{
+      background:rgba(10,10,30,0.9);backdrop-filter:blur(12px);
+      padding:0.75rem 1rem;text-align:left;
+      font-size:0.72rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;
+      color:rgba(255,255,255,0.5);border-bottom:1px solid var(--glass-b);
+      white-space:nowrap;cursor:pointer;user-select:none;
+    }
+    thead th:hover{color:rgba(255,255,255,0.85);}
+    thead th.sorted-asc::after{content:" ↑";color:var(--violet);}
+    thead th.sorted-desc::after{content:" ↓";color:var(--violet);}
+
+    tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.15s;}
+    tbody tr:hover{background:rgba(139,92,246,0.06);}
+    tbody tr:last-child{border-bottom:none;}
+    tbody td{padding:0.65rem 1rem;color:rgba(255,255,255,0.85);white-space:nowrap;}
+    .td-name{font-weight:500;color:#fff;max-width:220px;overflow:hidden;text-overflow:ellipsis;}
+    .td-school{color:var(--muted);max-width:180px;overflow:hidden;text-overflow:ellipsis;}
+
+    .type-badge{
+      display:inline-block;padding:0.2rem 0.6rem;border-radius:50px;
+      font-size:0.72rem;font-weight:600;letter-spacing:0.04em;
+    }
+    .grade-badge{
+      display:inline-block;
+      background:rgba(255,255,255,0.08);
+      border-radius:6px;padding:0.15rem 0.5rem;
+      font-weight:600;font-size:0.78rem;
+    }
+
+    /* ── Responsive ── */
+    @media(max-width:900px){.row-2,.row-3,.row-3r{grid-template-columns:1fr;}canvas{max-height:260px;}}
+    @media(max-width:640px){
+      #page{padding:5rem 1rem 4rem;}
+      .stats-strip{grid-template-columns:repeat(2,1fr);}
+      .hero h1{font-size:2.1rem;}
+      .table-controls{flex-direction:column;align-items:stretch;}
+      .table-count{margin-left:0;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+  <div class="bg-orb bg-orb-3"></div>
+
+  <a id="back-btn" href="index.html">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    Research Hub
+  </a>
+
+  <div id="page">
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-badge">Scholarship Dashboard</div>
+      <h1>Student Scholarships</h1>
+      <p>5 academic years · 15 partner schools · 1,350 scholarship recipients across 7 award categories</p>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="stats-strip">
+      <div class="stat-pill" data-c="violet">
+        <span class="num" data-target="1350">0</span>
+        <span class="lbl">Recipients</span>
+      </div>
+      <div class="stat-pill" data-c="amber">
+        <span class="num" data-target="7">0</span>
+        <span class="lbl">Award Types</span>
+      </div>
+      <div class="stat-pill" data-c="teal">
+        <span class="num" data-target="15">0</span>
+        <span class="lbl">Schools</span>
+      </div>
+      <div class="stat-pill" data-c="emerald">
+        <span class="num" data-target="5">0</span>
+        <span class="lbl">Academic Years</span>
+      </div>
+      <div class="stat-pill" data-c="cyan">
+        <span class="num" data-target="445">0</span>
+        <span class="lbl">Yayasan Awards</span>
+      </div>
+    </div>
+
+    <!-- Charts section -->
+    <div class="section-head" style="--sh-color:linear-gradient(135deg,#8b5cf6,#6366f1);">
+      <div class="section-head-icon">
+        <svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      </div>
+      Analytics
+    </div>
+
+    <!-- Row 1: Stacked bar + Donut -->
+    <div class="row-3" style="margin-bottom:1.5rem;">
+      <div class="chart-card" data-accent="violet">
+        <div class="chart-title">Scholarships by Year</div>
+        <div class="chart-sub">Stacked by award category · 5-year trend</div>
+        <div class="trend-legend" id="stackLegend"></div>
+        <canvas id="stackedBar"></canvas>
+      </div>
+      <div class="chart-card" data-accent="amber">
+        <div class="chart-title">Award Type Mix</div>
+        <div class="chart-sub">Distribution across all years</div>
+        <canvas id="donutType" style="max-height:220px;"></canvas>
+        <div class="donut-legend" id="donutLegend"></div>
+      </div>
+    </div>
+
+    <!-- Row 2: Schools bar + Grade groups -->
+    <div class="row-2">
+      <div class="chart-card" data-accent="teal">
+        <div class="chart-title">Top Schools by Recipients</div>
+        <div class="chart-sub">Cumulative across all years</div>
+        <canvas id="schoolsBar"></canvas>
+      </div>
+      <div class="chart-card" data-accent="emerald">
+        <div class="chart-title">Recipients by Grade Level</div>
+        <div class="chart-sub">KG through Grade 12</div>
+        <canvas id="gradeBar"></canvas>
+      </div>
+    </div>
+
+    <!-- Growth line chart -->
+    <div class="chart-card mb-chart" data-accent="indigo">
+      <div class="chart-title">Year-on-Year Growth</div>
+      <div class="chart-sub">Total scholarship recipients per academic year</div>
+      <canvas id="growthLine" style="max-height:200px;"></canvas>
+    </div>
+
+    <!-- Table section -->
+    <div class="table-section">
+      <div class="section-head" style="--sh-color:linear-gradient(135deg,#06b6d4,#0891b2);margin-top:1rem;">
+        <div class="section-head-icon">
+          <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        </div>
+        Scholarship Records
+      </div>
+
+      <div class="table-controls">
+        <input class="table-search" id="searchInput" type="text" placeholder="Search by name, school, or university…" />
+        <select class="table-filter" id="yearFilter">
+          <option value="">All Years</option>
+          <option>2021/2022</option>
+          <option>2022/2023</option>
+          <option>2023/2024</option>
+          <option>2024/2025</option>
+          <option>2025/2026</option>
+        </select>
+        <select class="table-filter" id="typeFilter">
+          <option value="">All Types</option>
+          <option>Yayasan</option>
+          <option>Olympiad</option>
+          <option>Other</option>
+          <option>Sport</option>
+          <option>Leadership</option>
+          <option>Art/Skill</option>
+          <option>Yatim</option>
+        </select>
+        <select class="table-filter" id="schoolFilter">
+          <option value="">All Schools</option>
+          <option>Kharisma Bangsa</option>
+          <option>Kesatuan Bangsa</option>
+          <option>Pribadi Depok</option>
+          <option>Cahaya Rancamaya</option>
+          <option>Mega Islamic Boarding School</option>
+          <option>Emer Islamic Boarding School</option>
+          <option>Fatih</option>
+          <option>Semesta</option>
+          <option>TNA Fatih</option>
+          <option>Pribadi Premiere</option>
+          <option>Pakar Belia Islamic School</option>
+          <option>Pribadi Bandung</option>
+          <option>Prestige</option>
+        </select>
+        <span class="table-count" id="tableCount"><strong>1350</strong> records</span>
+      </div>
+
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th data-col="n">#</th>
+                <th data-col="y">Year</th>
+                <th data-col="n">Name</th>
+                <th data-col="s">School</th>
+                <th data-col="t">Type</th>
+                <th data-col="g">Grade</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /#page -->
+
+  <script>
+  /* ─────────────────────────────────────────────
+     DATA
+  ───────────────────────────────────────────── */
+  const TYPE_COLORS = {
+    'Yayasan':   { bg:'rgba(20,184,166,0.18)',  border:'rgba(20,184,166,0.9)',  solid:'#14b8a6', text:'#99f6e4' },
+    'Olympiad':  { bg:'rgba(245,158,11,0.18)',  border:'rgba(245,158,11,0.9)',  solid:'#f59e0b', text:'#fde68a' },
+    'Art/Skill': { bg:'rgba(139,92,246,0.18)',  border:'rgba(139,92,246,0.9)', solid:'#8b5cf6', text:'#ddd6fe' },
+    'Sport':     { bg:'rgba(5,150,105,0.18)',   border:'rgba(5,150,105,0.9)',  solid:'#059669', text:'#a7f3d0' },
+    'Other':     { bg:'rgba(6,182,212,0.18)',   border:'rgba(6,182,212,0.9)',  solid:'#06b6d4', text:'#a5f3fc' },
+    'Leadership':{ bg:'rgba(99,102,241,0.18)',  border:'rgba(99,102,241,0.9)', solid:'#6366f1', text:'#c7d2fe' },
+    'Yatim':     { bg:'rgba(244,63,94,0.18)',   border:'rgba(244,63,94,0.9)',  solid:'#f43f5e', text:'#fecdd3' },
+  };
+
+  const YEARS      = ['2021/2022','2022/2023','2023/2024','2024/2025','2025/2026'];
+  const YEAR_SHORT = ['21/22','22/23','23/24','24/25','25/26'];
+  const TYPES      = ['Yayasan','Olympiad','Other','Sport','Leadership','Art/Skill','Yatim'];
+
+  const YEAR_TYPE = {
+    '2021/2022': {'Yayasan':9,'Olympiad':37,'Art/Skill':1,'Other':26,'Leadership':6,'Sport':1,'Yatim':0},
+    '2022/2023': {'Yayasan':13,'Olympiad':51,'Art/Skill':2,'Sport':2,'Leadership':4,'Other':29,'Yatim':0},
+    '2023/2024': {'Yayasan':89,'Olympiad':73,'Sport':44,'Art/Skill':15,'Leadership':11,'Other':12,'Yatim':0},
+    '2024/2025': {'Yayasan':142,'Olympiad':75,'Sport':51,'Other':41,'Art/Skill':15,'Leadership':20,'Yatim':2},
+    '2025/2026': {'Olympiad':111,'Leadership':19,'Other':198,'Yayasan':192,'Sport':51,'Art/Skill':6,'Yatim':2},
+  };
+  const TYPE_TOTALS = {'Yayasan':445,'Olympiad':347,'Other':306,'Sport':149,'Leadership':60,'Art/Skill':39,'Yatim':4};
+  const YEAR_TOTALS = {'2021/2022':80,'2022/2023':101,'2023/2024':244,'2024/2025':346,'2025/2026':579};
+  const SCHOOLS     = [['Kharisma Bangsa',472],['Kesatuan Bangsa',261],['Pribadi Depok',117],['Cahaya Rancamaya',85],['Mega Islamic Boarding School',77],['Emer Islamic Boarding School',61],['Fatih',58],['Semesta',56],['TNA Fatih',49],['Pribadi Premiere',44],['Pakar Belia Islamic School',40],['Pribadi Bandung',16],['Prestige',11]];
+  const GRADE_GROUPS= [['KG',61],['Grade 1–3',120],['Grade 4–6',82],['Grade 7–9',453],['Grade 10–12',634]];
+
+  /* ─────────────────────────────────────────────
+     CHART DEFAULTS
+  ───────────────────────────────────────────── */
+  Chart.defaults.color = 'rgba(255,255,255,0.55)';
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  const gridColor = 'rgba(255,255,255,0.06)';
+
+  /* ── 1. Stacked bar: year × type ── */
+  const stackCtx = document.getElementById('stackedBar').getContext('2d');
+  new Chart(stackCtx, {
+    type: 'bar',
+    data: {
+      labels: YEAR_SHORT,
+      datasets: TYPES.map(t => ({
+        label: t,
+        data: YEARS.map(y => YEAR_TYPE[y][t] || 0),
+        backgroundColor: TYPE_COLORS[t].bg,
+        borderColor:     TYPE_COLORS[t].border,
+        borderWidth: 1,
+        borderRadius: 4,
+        borderSkipped: false,
+      }))
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: {
+          footer: (items) => `Total: ${items.reduce((s,i) => s+i.parsed.y, 0)}`
+        }
+      }},
+      scales: {
+        x: { stacked: true, grid: { color: gridColor }, ticks: { font: { size: 11 } } },
+        y: { stacked: true, grid: { color: gridColor }, ticks: { font: { size: 11 } } },
+      }
+    }
+  });
+
+  // Legend
+  const stackLeg = document.getElementById('stackLegend');
+  TYPES.forEach(t => {
+    const el = document.createElement('div');
+    el.className = 'tl-item';
+    el.innerHTML = `<div class="tl-dot" style="background:${TYPE_COLORS[t].solid}"></div>${t}`;
+    stackLeg.appendChild(el);
+  });
+
+  /* ── 2. Donut: type distribution ── */
+  const donutCtx = document.getElementById('donutType').getContext('2d');
+  new Chart(donutCtx, {
+    type: 'doughnut',
+    data: {
+      labels: TYPES,
+      datasets: [{
+        data: TYPES.map(t => TYPE_TOTALS[t]),
+        backgroundColor: TYPES.map(t => TYPE_COLORS[t].bg),
+        borderColor:     TYPES.map(t => TYPE_COLORS[t].border),
+        borderWidth: 2,
+        hoverOffset: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '68%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed} (${((ctx.parsed/1350)*100).toFixed(1)}%)` } }
+      }
+    }
+  });
+
+  // Donut legend
+  const dLeg = document.getElementById('donutLegend');
+  TYPES.forEach(t => {
+    const pct = ((TYPE_TOTALS[t]/1350)*100).toFixed(1);
+    const row = document.createElement('div');
+    row.className = 'dl-row';
+    row.innerHTML = `<span class="dl-label"><span class="dl-dot" style="background:${TYPE_COLORS[t].solid}"></span>${t}</span><span class="dl-val">${TYPE_TOTALS[t]} <span style="color:var(--muted);font-weight:400">(${pct}%)</span></span>`;
+    dLeg.appendChild(row);
+  });
+
+  /* ── 3. Schools horizontal bar (via Chart.js bar horizontal) ── */
+  const schoolCtx = document.getElementById('schoolsBar').getContext('2d');
+  const schoolColors = ['#14b8a6','#8b5cf6','#f59e0b','#06b6d4','#059669','#6366f1','#f43f5e','#0d9488','#a78bfa','#34d399','#fbbf24','#67e8f9','#fb7185'];
+  new Chart(schoolCtx, {
+    type: 'bar',
+    data: {
+      labels: SCHOOLS.map(s => s[0].length > 22 ? s[0].slice(0,20)+'…' : s[0]),
+      datasets: [{
+        data: SCHOOLS.map(s => s[1]),
+        backgroundColor: schoolColors.map(c => c+'33'),
+        borderColor:     schoolColors,
+        borderWidth: 1.5,
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { title: (items) => SCHOOLS[items[0].dataIndex][0] }
+      }},
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { font: { size: 10 } } },
+        y: { grid: { display: false }, ticks: { font: { size: 10 } } },
+      }
+    }
+  });
+
+  /* ── 4. Grade groups bar ── */
+  const gradeCtx = document.getElementById('gradeBar').getContext('2d');
+  const gradeColors = ['#06b6d4','#14b8a6','#059669','#f59e0b','#8b5cf6'];
+  new Chart(gradeCtx, {
+    type: 'bar',
+    data: {
+      labels: GRADE_GROUPS.map(g => g[0]),
+      datasets: [{
+        data: GRADE_GROUPS.map(g => g[1]),
+        backgroundColor: gradeColors.map(c => c+'2e'),
+        borderColor: gradeColors,
+        borderWidth: 1.5,
+        borderRadius: 8,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: gridColor }, ticks: { font: { size: 11 } } },
+      }
+    }
+  });
+
+  /* ── 5. Growth line ── */
+  const growthCtx = document.getElementById('growthLine').getContext('2d');
+  const growthGrad = growthCtx.createLinearGradient(0,0,0,180);
+  growthGrad.addColorStop(0,'rgba(139,92,246,0.35)');
+  growthGrad.addColorStop(1,'rgba(139,92,246,0)');
+  new Chart(growthCtx, {
+    type: 'line',
+    data: {
+      labels: YEAR_SHORT,
+      datasets: [{
+        label: 'Recipients',
+        data: YEARS.map(y => YEAR_TOTALS[y]),
+        borderColor: '#8b5cf6',
+        backgroundColor: growthGrad,
+        borderWidth: 2.5,
+        pointBackgroundColor: '#8b5cf6',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.4,
+        fill: true,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false }, tooltip: {
+        callbacks: { label: ctx => ` ${ctx.parsed.y} recipients` }
+      }},
+      scales: {
+        x: { grid: { color: gridColor }, ticks: { font: { size: 11 } } },
+        y: { grid: { color: gridColor }, ticks: { font: { size: 11 } } },
+      }
+    }
+  });
+
+  /* ─────────────────────────────────────────────
+     STAT COUNTER ANIMATION
+  ───────────────────────────────────────────── */
+  document.querySelectorAll('.num[data-target]').forEach(el => {
+    const target = +el.dataset.target;
+    const dur = 1200;
+    const start = performance.now();
+    const tick = (now) => {
+      const p = Math.min((now - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(ease * target).toLocaleString();
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+
+  /* ─────────────────────────────────────────────
+     TABLE
+  ───────────────────────────────────────────── */
+  const RAW = [{"y":"2021/2022","n":"Esad Bayram Arivamurti","s":"Cahaya Rancamaya","t":"Yayasan","g":7},{"y":"2021/2022","n":"Faith Abiyu Ghaisan","s":"Cahaya Rancamaya","t":"Olympiad","g":7},{"y":"2021/2022","n":"Hanif Alfarizki Pratama","s":"Cahaya Rancamaya","t":"Olympiad","g":7},{"y":"2021/2022","n":"Farel Zakwan Andarya","s":"Cahaya Rancamaya","t":"Olympiad","g":10},{"y":"2021/2022","n":"Iqbal Firmansyah","s":"Cahaya Rancamaya","t":"Olympiad","g":10},{"y":"2021/2022","n":"Ridho Ramadhan Al Haq","s":"Cahaya Rancamaya","t":"Art/Skill","g":10},{"y":"2021/2022","n":"Muhammad Ilham Alfarisi","s":"Cahaya Rancamaya","t":"Olympiad","g":10},{"y":"2021/2022","n":"Dimas Nabil Ridho Satriyo","s":"Cahaya Rancamaya","t":"Other","g":10},{"y":"2021/2022","n":"Mulyono Maulana","s":"Cahaya Rancamaya","t":"Other","g":10},{"y":"2021/2022","n":"Danindra Sakti Anandito","s":"Cahaya Rancamaya","t":"Yayasan","g":7},{"y":"2021/2022","n":"Hasna Ramadhian Ramadhian","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Gita Widyastuti","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Tiara Kusumawardani","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Fiki Nurul Hidayat","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Bima Satriatama","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Rizki Bima Aditya","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Ahmad Muzakki","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Haikal Ahmad","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Yuda Prabowo","s":"Cahaya Rancamaya","t":"Other","g":11},{"y":"2021/2022","n":"Ridho Ramadhan","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Ananda Putri","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Bintang Putra","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Cahaya Dewi","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Dini Pratiwi","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Fajar Nugraha","s":"Cahaya Rancamaya","t":"Yayasan","g":11},{"y":"2021/2022","n":"Gibran Arkaan","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Hana Salsabila","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Ilham Fauzi","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Jihan Nabila","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Kirana Putri","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Luthfi Hakim","s":"Cahaya Rancamaya","t":"Leadership","g":11},{"y":"2021/2022","n":"Mutiara Sari","s":"Cahaya Rancamaya","t":"Sport","g":11}];
+
+  // Load full data asynchronously via fetch from same server
+  // For now use the static data embedded below (will be populated by build step)
+  // Full dataset stored in resources/scholarship-data.json (generated by build.js)
+
+  let ALL_DATA = RAW; // placeholder — full data loaded below
+  let filtered  = [];
+  let sortCol   = 'n';
+  let sortDir   = 1;
+
+  async function loadFullData() {
+    try {
+      const res = await fetch('resources/scholarship-data.json');
+      if (res.ok) {
+        ALL_DATA = await res.json();
+        applyFilters();
+      }
+    } catch(e) {
+      // use placeholder data already shown
+    }
+  }
+
+  function typeBadge(t) {
+    const c = TYPE_COLORS[t] || { bg:'rgba(255,255,255,0.1)', border:'rgba(255,255,255,0.3)', text:'#fff' };
+    return `<span class="type-badge" style="background:${c.bg};border:1px solid ${c.border};color:${c.text}">${t}</span>`;
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById('tableBody');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:3rem;color:var(--muted);">No records found</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.map((r, i) => `
+      <tr>
+        <td style="color:var(--muted);font-size:0.75rem;">${i+1}</td>
+        <td style="font-size:0.78rem;color:var(--muted);">${r.y}</td>
+        <td class="td-name">${r.n}</td>
+        <td class="td-school">${r.s}</td>
+        <td>${typeBadge(r.t)}</td>
+        <td><span class="grade-badge">${r.g}</span></td>
+      </tr>
+    `).join('');
+  }
+
+  function applyFilters() {
+    const q  = document.getElementById('searchInput').value.toLowerCase();
+    const yr = document.getElementById('yearFilter').value;
+    const ty = document.getElementById('typeFilter').value;
+    const sc = document.getElementById('schoolFilter').value;
+
+    filtered = ALL_DATA.filter(r =>
+      (!q  || r.n.toLowerCase().includes(q) || r.s.toLowerCase().includes(q)) &&
+      (!yr || r.y === yr) &&
+      (!ty || r.t === ty) &&
+      (!sc || r.s === sc)
+    );
+
+    filtered.sort((a, b) => {
+      let av = a[sortCol], bv = b[sortCol];
+      if (sortCol === 'g') { av = Number(av)||0; bv = Number(bv)||0; }
+      else { av = String(av||'').toLowerCase(); bv = String(bv||'').toLowerCase(); }
+      return av < bv ? -sortDir : av > bv ? sortDir : 0;
+    });
+
+    document.getElementById('tableCount').innerHTML = `<strong>${filtered.length}</strong> of ${ALL_DATA.length} records`;
+    renderTable(filtered);
+  }
+
+  document.getElementById('searchInput').addEventListener('input', applyFilters);
+  document.getElementById('yearFilter').addEventListener('change', applyFilters);
+  document.getElementById('typeFilter').addEventListener('change', applyFilters);
+  document.getElementById('schoolFilter').addEventListener('change', applyFilters);
+
+  // Column sort
+  document.querySelectorAll('thead th[data-col]').forEach((th, idx) => {
+    if (idx === 0) return; // skip #
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (sortCol === col) { sortDir *= -1; }
+      else { sortCol = col; sortDir = 1; }
+      document.querySelectorAll('thead th').forEach(h => h.classList.remove('sorted-asc','sorted-desc'));
+      th.classList.add(sortDir === 1 ? 'sorted-asc' : 'sorted-desc');
+      applyFilters();
+    });
+  });
+
+  // Load full data + init
+  loadFullData().then(() => applyFilters());
+  applyFilters();
+  </script>
+</body>
+</html>
