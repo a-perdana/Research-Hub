@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Eduversal Indonesia Research Hub - Central portal for olympiad tracking, research initiatives, and academic competitions"
+      content="Eduversal Indonesia Research Hub - Official platform for publishing and showcasing the work of the Eduversal Research &amp; Development department"
     />
     <meta name="theme-color" content="#14b8a6" />
     <title>Eduversal Research Hub | Indonesia</title>
@@ -795,8 +795,38 @@
         fill: rgba(20, 184, 166, 0.6);
       }
 
-      /* ── Logout Button (hidden, nav handles it) ── */
-      #logoutBtn { display: none; }
+      /* ── Logout Button ── */
+      #logoutBtn {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.5rem;
+        z-index: 100;
+        display: none;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.55rem 1.1rem;
+        background: var(--glass-bg);
+        border: 1px solid var(--glass-border);
+        border-radius: 10px;
+        color: rgba(255,255,255,0.75);
+        font-size: 0.85rem;
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        backdrop-filter: blur(12px);
+        transition: all 0.25s ease;
+      }
+
+      #logoutBtn:hover {
+        background: rgba(239,68,68,0.15);
+        border-color: rgba(239,68,68,0.35);
+        color: #fca5a5;
+      }
+
+      #logoutBtn svg {
+        width: 16px; height: 16px;
+        fill: currentColor;
+      }
 
       /* ── Main Content ── */
       #mainContent { display: none; }
@@ -901,7 +931,12 @@
     </div>
 
     <!-- Logout Button -->
-    <button id="logoutBtn">Sign Out</button>
+    <button id="logoutBtn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+      </svg>
+      Sign Out
+    </button>
 
     <!-- Main Content -->
     <div id="mainContent">
@@ -921,8 +956,8 @@
         </div>
         <h1>Research Hub</h1>
         <p class="subtitle">
-          Central portal for olympiad tracking, research initiatives, and
-          academic competition management across partner schools.
+          The official platform for publishing and showcasing the work of
+          the Eduversal Research &amp; Development department.
         </p>
         <div class="status-badge">
           <span>2025/2026 Academic Year &bull; Active</span>
@@ -1059,10 +1094,12 @@
           document.getElementById("loadingScreen").style.display = "none";
           document.getElementById("loginScreen").style.display   = "none";
           document.getElementById("mainContent").style.display   = "block";
+          document.getElementById("logoutBtn").style.display     = "flex";
         } else {
           document.getElementById("loadingScreen").style.display = "none";
           document.getElementById("loginScreen").style.display   = "flex";
           document.getElementById("mainContent").style.display   = "none";
+          document.getElementById("logoutBtn").style.display     = "none";
         }
       });
 
