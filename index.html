@@ -1205,12 +1205,12 @@
       const loginForm = document.getElementById("loginForm");
       const errorMsg  = document.getElementById("errorMsg");
 
-      const allowedDomains = [
-        "scr.sch.id", "eibos.sch.id", "fatih.sch.id", "gcb.sch.id",
-        "kesatuanbangsa.sch.id", "kbs.sch.id", "mega.sch.id", "pakarbelia.sch.id",
-        "prestigeschool.sch.id", "pribadibandung.sch.id", "pribadidepok.sch.id",
-        "pribadipremiere.sch.id", "semesta.sch.id", "tnafatih.sch.id", "eduversal.org",
-      ];
+      const ALLOWED_DOMAIN = 'eduversal.org';
+      function isDomainAllowed(user) {
+        const domain = (user.email || '').split('@')[1];
+        if (domain === ALLOWED_DOMAIN) return true;
+        return user.providerData.some(p => p.providerId === 'password');
+      }
 
       function showError(msg) {
         errorMsg.textContent = msg;
@@ -1221,9 +1221,7 @@
       // ── Auth State ──────────────────────────────────────────────────────
       onAuthStateChanged(auth, async (user) => {
         if (user) {
-          const domain = user.email.split("@")[1];
-          const isPasswordUser = user.providerData.some(p => p.providerId === "password");
-          if (!allowedDomains.includes(domain) && !isPasswordUser) {
+          if (!isDomainAllowed(user)) {
             await signOut(auth);
             showError("Access denied. Only authorized school emails are allowed.");
             return;
@@ -1288,7 +1286,7 @@
         btn.textContent = "Signing in...";
         try {
           const result = await signInWithPopup(auth, googleProvider);
-          if (!allowedDomains.includes(result.user.email.split("@")[1])) {
+          if (!isDomainAllowed(result.user)) {
             await signOut(auth);
             showError("Access denied. Only authorized school emails are allowed.");
           }

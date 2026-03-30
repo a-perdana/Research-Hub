@@ -30,6 +30,15 @@ const PLATFORM_KEY  = 'role_researchhub';
 const DEFAULT_ROLE  = 'research_user';
 const ALLOWED_ROLES = ['research_user', 'research_admin'];
 
+// Only @eduversal.org addresses are allowed. Email/password accounts
+// (manually created in Firebase Console) bypass this check.
+const ALLOWED_DOMAIN = 'eduversal.org';
+function isDomainAllowed(user) {
+  const domain = (user.email || '').split('@')[1];
+  if (domain === ALLOWED_DOMAIN) return true;
+  return user.providerData.some(p => p.providerId === 'password');
+}
+
 // Hide page content until auth is confirmed (prevents flash)
 document.body.style.visibility = 'hidden';
 
@@ -92,7 +101,14 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // 3. Role check
+  // 3. Domain check
+  if (!isDomainAllowed(user)) {
+    await signOut(auth);
+    window.location.replace('index.html?error=domain');
+    return;
+  }
+
+  // 4. Role check
   const platformRole = profile[PLATFORM_KEY];
   if (!ALLOWED_ROLES.includes(platformRole)) {
     await signOut(auth);
@@ -100,11 +116,11 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // 4. Expose globals
+  // 5. Expose globals
   window.currentUser = user;
   window.userProfile = profile;
 
-  // 5. Show page and notify
+  // 6. Show page and notify
   document.body.style.visibility = 'visible';
   document.dispatchEvent(new CustomEvent('authReady', {
     detail: { user, profile },
