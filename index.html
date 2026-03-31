@@ -1204,6 +1204,7 @@
 
       const loginForm = document.getElementById("loginForm");
       const errorMsg  = document.getElementById("errorMsg");
+      let currentUser = null;
 
       const ALLOWED_DOMAIN = 'eduversal.org';
       function isDomainAllowed(user) {
@@ -1227,6 +1228,8 @@
             return;
           }
 
+          currentUser = user;
+
           // Ensure Firestore profile exists with role_researchhub
           try {
             const userRef = doc(db, "users", user.uid);
@@ -1245,11 +1248,21 @@
             }
           } catch (_) {}
 
+          // Admin class for role-based UI
+          try {
+            const snap2 = await getDoc(doc(db, "users", user.uid));
+            const role  = snap2.exists() ? snap2.data().role_researchhub : "research_user";
+            if (role === "research_admin") {
+              document.body.classList.add("is-admin");
+            }
+          } catch (_) {}
+
           document.getElementById("loadingScreen").style.display = "none";
           document.getElementById("loginScreen").style.display   = "none";
           document.getElementById("mainContent").style.display   = "block";
           document.getElementById("logoutBtn").style.display     = "flex";
         } else {
+          currentUser = null;
           document.getElementById("loadingScreen").style.display = "none";
           document.getElementById("loginScreen").style.display   = "flex";
           document.getElementById("mainContent").style.display   = "none";

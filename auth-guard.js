@@ -10,6 +10,7 @@
 //   window.firebaseApp   — FirebaseApp instance
 //   window.auth          — Auth instance
 //   window.db            — Firestore instance
+//   window.storage       — Storage instance
 //   window.currentUser   — firebase.User object
 //   window.userProfile   — Firestore users/{uid} document data
 //
@@ -23,7 +24,10 @@ import { getAuth, onAuthStateChanged, signOut }
   from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp,
+  collection, collectionGroup, onSnapshot, updateDoc, arrayUnion, arrayRemove,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject }
+  from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 // ── Platform identity ─────────────────────────────────────────────
 const PLATFORM_KEY  = 'role_researchhub';
@@ -52,14 +56,54 @@ const firebaseConfig = {
   appId:             window.ENV.FIREBASE_APP_ID,
 };
 
-const app  = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db   = getFirestore(app);
+const app     = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+const auth    = getAuth(app);
+const db      = getFirestore(app);
+const storage = getStorage(app);
 
 window.firebaseApp  = app;
 window.auth         = auth;
 window.db           = db;
-window.firestoreOps = { doc, getDoc, setDoc, serverTimestamp };
+window.storage      = storage;
+window.firestoreOps = {
+  doc, getDoc, setDoc, serverTimestamp,
+  collection, collectionGroup, onSnapshot, updateDoc, arrayUnion, arrayRemove,
+};
+window.storageOps   = { ref, uploadBytes, getDownloadURL, deleteObject };
+
+// ── Name prompt (shown when displayName is missing) ───────────────
+function promptForName() {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(28,28,46,0.75);display:flex;align-items:center;justify-content:center;padding:24px;font-family:"DM Sans",sans-serif';
+    overlay.innerHTML = `
+      <div style="background:#fff;border-radius:16px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,0.35)">
+        <h2 style="font-size:1.4rem;font-weight:600;color:#1c1c2e;margin-bottom:6px">Welcome!</h2>
+        <p style="font-size:0.875rem;color:#8888a8;margin-bottom:24px">Please enter your full name to complete your profile.</p>
+        <input id="_nameInput" type="text" placeholder="Your full name"
+          style="width:100%;padding:10px 14px;border:1px solid #e0ddd6;border-radius:8px;font-size:0.95rem;color:#1c1c2e;outline:none;margin-bottom:8px;box-sizing:border-box">
+        <p id="_nameErr" style="font-size:0.82rem;color:#dc2626;min-height:20px;margin-bottom:12px"></p>
+        <button id="_nameBtn" style="width:100%;padding:11px;background:linear-gradient(135deg,#7c3aed,#0891b2);color:#fff;border:none;border-radius:8px;font-size:0.95rem;font-weight:600;cursor:pointer">Continue →</button>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.body.style.visibility = 'visible';
+
+    const input = overlay.querySelector('#_nameInput');
+    const btn   = overlay.querySelector('#_nameBtn');
+    const err   = overlay.querySelector('#_nameErr');
+    input.focus();
+
+    const submit = () => {
+      const name = input.value.trim();
+      if (!name) { err.textContent = 'Please enter your name.'; return; }
+      overlay.remove();
+      document.body.style.visibility = 'hidden';
+      resolve(name);
+    };
+    btn.addEventListener('click', submit);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') submit(); });
+  });
+}
 
 // ── Auth state listener ───────────────────────────────────────────
 onAuthStateChanged(auth, async (user) => {
@@ -116,11 +160,44 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // 5. Expose globals
+  // 5. Name prompt if missing
+  if (!profile.displayName) {
+    const name = await promptForName();
+    await setDoc(userRef, { displayName: name }, { merge: true });
+    profile.displayName = name;
+  }
+
+  // 6. All checks passed — expose globals
   window.currentUser = user;
   window.userProfile = profile;
 
-  // 6. Show page and notify
+  // ── Populate shared nav elements ──────────────────────────────
+  const displayName = profile.displayName || user.displayName;
+  const navUserName = document.querySelector('.nav-user-name');
+  const navAvatar   = document.getElementById('navAvatar');
+  const logoutBtn   = document.getElementById('logoutBtn');
+
+  if (navUserName) {
+    navUserName.textContent = displayName
+      ? displayName.split(' ')[0]
+      : user.email;
+  }
+
+  if (navAvatar) {
+    const initials = displayName
+      ? displayName.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+      : user.email[0].toUpperCase();
+    navAvatar.textContent = initials;
+  }
+
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+      await signOut(auth);
+      window.location.href = 'index.html';
+    });
+  }
+
+  // 7. Show page and notify
   document.body.style.visibility = 'visible';
   document.dispatchEvent(new CustomEvent('authReady', {
     detail: { user, profile },
