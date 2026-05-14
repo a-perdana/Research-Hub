@@ -4,6 +4,8 @@
 
 Research Hub is a data dashboard for Eduversal's research and academic staff. It displays university placements, scholarship records, Olympiad results, teacher databases, and related analytics. It is a **vanilla HTML/CSS/JS application** (no React, no bundler framework). Pages are plain `.html` files with inline scripts that load Firebase via CDN.
 
+> **Status (2026-05-13):** Research Hub is **internal/staff-only** and is NOT one of Eduversal's four user-facing platforms (CH / AH / TH / SH). It still ships to Vercel and shares the `centralhub-8727b` backend, but the root [`CLAUDE.md`](../CLAUDE.md) "Four user-facing platforms" listing intentionally excludes it. Don't add Research Hub to user-facing role tables, page-access seeds, or new-hub onboarding flows.
+
 **Deployment:** Vercel (build output in `dist/`).
 
 ---
@@ -12,16 +14,18 @@ Research Hub is a data dashboard for Eduversal's research and academic staff. It
 
 ```
 Eduversal Web/                    ← monorepo root (not a deployed app)
-├── Academic Hub/                 ← analytics dashboards (Vercel)
-├── Central Hub/                  ← admin control panel (Vercel)
+├── Academic Hub/                 ← analytics dashboards (Vercel) · user-facing
+├── Central Hub/                  ← admin control panel (Vercel) · user-facing
 │   ├── firestore.rules           ← ⚠️ ONLY Firestore rules file — deploy from here
 │   └── firebase.json             ← firebase deploy config
-├── Teachers Hub/                 ← teacher tools (Vercel)
-├── Research Hub/                 ← THIS app (Vercel)
+├── Teachers Hub/                 ← teacher tools (Vercel) · user-facing
+├── Students Hub/                 ← student portal (Vercel) · user-facing (added 2026-05-10)
+├── Research Hub/                 ← THIS app (Vercel) · internal staff dashboard
+├── IGCSE Tools/                  ← internal authoring tool (separate Firebase project)
 └── keys/                         ← service account JSON keys (gitignored)
 ```
 
-Each app has its **own GitHub repository** and its **own deployment target**, but all share the single Firebase backend `centralhub-8727b`.
+Each app has its **own GitHub repository** and its **own deployment target**. The four user-facing apps (AH / CH / TH / SH) share the single Firebase backend `centralhub-8727b`; Research Hub also shares it but its rules / collections live alongside the user-facing ones (Olympiad, scholarships, university placements). IGCSE Tools is on its own `igcse-tools` Firebase project.
 
 ---
 
